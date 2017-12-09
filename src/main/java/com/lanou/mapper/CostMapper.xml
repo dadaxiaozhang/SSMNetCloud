@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanou.mapper.CostMapper">
+  <resultMap id="BaseResultMap" type="com.lanou.bean.Cost">
+    <result column="cost_id" jdbcType="INTEGER" property="costId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="base_duration" jdbcType="INTEGER" property="baseDuration" />
+    <result column="base_cost" jdbcType="INTEGER" property="baseCost" />
+    <result column="unit_cost" jdbcType="INTEGER" property="unitCost" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="descr" jdbcType="VARCHAR" property="descr" />
+    <result column="creatime" jdbcType="TIMESTAMP" property="creatime" />
+    <result column="startime" jdbcType="TIMESTAMP" property="startime" />
+    <result column="cost_type" jdbcType="CHAR" property="costType" />
+  </resultMap>
+  <insert id="insert" parameterType="com.lanou.bean.Cost">
+    insert into cost (cost_id, name, base_duration, 
+      base_cost, unit_cost, status, 
+      descr, creatime, startime, 
+      cost_type)
+    values (#{costId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{baseDuration,jdbcType=INTEGER}, 
+      #{baseCost,jdbcType=INTEGER}, #{unitCost,jdbcType=INTEGER}, #{status,jdbcType=CHAR}, 
+      #{descr,jdbcType=VARCHAR}, #{creatime,jdbcType=TIMESTAMP}, #{startime,jdbcType=TIMESTAMP}, 
+      #{costType,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lanou.bean.Cost">
+    insert into cost
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="costId != null">
+        cost_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="baseDuration != null">
+        base_duration,
+      </if>
+      <if test="baseCost != null">
+        base_cost,
+      </if>
+      <if test="unitCost != null">
+        unit_cost,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="descr != null">
+        descr,
+      </if>
+      <if test="creatime != null">
+        creatime,
+      </if>
+      <if test="startime != null">
+        startime,
+      </if>
+      <if test="costType != null">
+        cost_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="costId != null">
+        #{costId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="baseDuration != null">
+        #{baseDuration,jdbcType=INTEGER},
+      </if>
+      <if test="baseCost != null">
+        #{baseCost,jdbcType=INTEGER},
+      </if>
+      <if test="unitCost != null">
+        #{unitCost,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=CHAR},
+      </if>
+      <if test="descr != null">
+        #{descr,jdbcType=VARCHAR},
+      </if>
+      <if test="creatime != null">
+        #{creatime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="startime != null">
+        #{startime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="costType != null">
+        #{costType,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>
