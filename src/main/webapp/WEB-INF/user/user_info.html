@@ -18,7 +18,7 @@
                     console.log(resultData);
 
                     var date=resultData.data.enrolldate;
-                    $("#admin_code").val(resultData.data.adminCode);
+                    $("#admin_code").val(resultData.data.admin_code);
                     $("#name").val(resultData.data.name);
                     $("#telephone").val(resultData.data.telephone);
                     $("#email").val(resultData.data.email);
@@ -26,11 +26,6 @@
                 }
 
             })
-
-
-
-
-
 
             $.ajax({
                 url: "/getAccess",
@@ -65,7 +60,7 @@
                             div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/report/report_list.html" class="report_off"></a></li>';
                         }
                     }
-                    div.innerHTML = div.innerHTML + ' <li><a href="/user_info" class="information_off"></a></li>' + ' <li><a href="user/user_modi_pwd.html" class="password_off"></a></li>';
+                    div.innerHTML = div.innerHTML + ' <li><a href="/user_info" class="information_off"></a></li>' + ' <li><a href="/updatePwd" class="password_off"></a></li>';
 
                     $("#access").val(access);
                 }
@@ -84,9 +79,59 @@
                 divResult.style.display = "none";
         }
 
+        function saveInfo() {
+            $("#name_error").empty();
+            $("#tele_error").empty();
+            $("#email_error").empty();
+
+            var name = $("#name").val();
+            if (name == ""){
+                $("#name_error").text("请输入姓名");
+                return;
+            }
+
+            var telephone = $("#telephone").val();
+            if (telephone == ""){
+                $("#tele_error").text("请输入电话");
+                return;
+            }
+
+            var email = $("#email").val();
+            if (email == ""){
+                $("#email_error").text("请输入验证码");
+                return;
+            }
+
+            $.ajax({
+
+                type:"post",
+                url:"/update",
+                data:{
+
+                    "name":name,
+                    "telephone":telephone,
+                    "email":email
+                },
+
+                success:function () {
+                    showResult()
+
+                }
+
+            })
+        }
+        //回车时，默认是保存
+        function on_return() {
+            if (window.event.keyCode == 13) {
+                if (document.all('update') != null) {
+                    document.all('update').click();
+                }
+            }
+        }
+
     </script>
 </head>
-<body>
+<body onkeydown="on_return()">
 <!--Logo区域开始-->
 <div id="header">
     <img src="../../images/logo.png" alt="logo" class="left"/>
@@ -115,23 +160,23 @@
         <div class="input_info">
             <input id="name" type="text" value=""/>
             <span class="required">*</span>
-            <div class="validate_msg_long error_msg">20长度以内的汉字、字母的组合</div>
+            <div class="validate_msg_long error_msg" id="name_error">20长度以内的汉字、字母的组合</div>
         </div>
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
             <input id="telephone" type="text" class="width200" value=""/>
-            <div class="validate_msg_medium">电话号码格式：手机或固话</div>
+            <div class="validate_msg_medium" id="tele_error">电话号码格式：手机或固话</div>
         </div>
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
             <input id="email" type="text" class="width200" value=""/>
-            <div class="validate_msg_medium">50长度以内，符合 email 格式</div>
+            <div class="validate_msg_medium" id="email_error">50长度以内，符合 email 格式</div>
         </div>
         <div class="text_info clearfix"><span>创建时间：</span></div>
         <div class="input_info"><input id="enrolldate" type="text" readonly="readonly" class="readonly" value=""/>
         </div>
         <div class="button_info clearfix">
-            <input type="button" value="保存" class="btn_save" onclick="showResult();"/>
+            <input id="update" type="button" value="保存" class="btn_save" onclick="saveInfo();"/>
             <input type="button" value="取消" class="btn_save"/>
         </div>
     </form>

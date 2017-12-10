@@ -2,7 +2,6 @@ package com.lanou.login.controller;
 
 import com.lanou.login.bean.AdminInfo;
 import com.lanou.bean.ModuleInfo;
-import com.lanou.login.service.AdminInfoService;
 import com.lanou.login.service.Impl.AdminInfoServiceImpl;
 import com.lanou.utils.AjaxResult;
 import com.lanou.utils.VerifyCode;
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,7 +45,7 @@ public class LoginController {
     public AjaxResult login(AdminInfo admin, String code, HttpSession session) {
 
         AjaxResult ajaxResult = new AjaxResult();
-        if (admin.getAdminCode() != null && admin.getPassword() != null && code != null) {
+        if (admin.getAdmin_code() != null && admin.getPassword() != null && code != null) {
 //            equalsIgnoreCase()忽略大小写比较字符串是否相同
             if (!code.trim().equalsIgnoreCase(codeContent)) {
                 ajaxResult.setErrorCode(404);
@@ -56,8 +54,8 @@ public class LoginController {
             }
 
             AdminInfo adminOut = adminInfoService.checkUser(admin);
-            System.out.println(adminOut+"**********");
-            List<ModuleInfo> moduleInfoList = adminInfoService.getModule(adminOut.getAdminId());
+
+            List<ModuleInfo> moduleInfoList = adminInfoService.getModule(adminOut.getAdmin_id());
 
             session.setAttribute("loginAccess", moduleInfoList);
             session.setAttribute("loginAdmin", adminOut);

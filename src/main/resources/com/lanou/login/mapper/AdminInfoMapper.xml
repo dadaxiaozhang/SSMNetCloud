@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lanou.login.mapper.AdminInfoMapper">
   <resultMap id="adminMap" type="com.lanou.login.bean.AdminInfo">
-    <result column="admin_id" jdbcType="INTEGER" property="adminId" />
-    <result column="admin_code" jdbcType="VARCHAR" property="adminCode" />
+    <result column="admin_id" jdbcType="INTEGER" property="admin_id" />
+    <result column="admin_code" jdbcType="VARCHAR" property="admin_code" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="telephone" jdbcType="VARCHAR" property="telephone" />
@@ -14,17 +14,17 @@
     insert into admin_info (admin_id, admin_code, password, 
       name, telephone, email, 
       enrolldate)
-    values (#{adminId,jdbcType=INTEGER}, #{adminCode,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+    values (#{admin_id,jdbcType=INTEGER}, #{admin_code,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
       #{name,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{enrolldate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.lanou.login.bean.AdminInfo">
     insert into admin_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="adminId != null">
+      <if test="admin_id != null">
         admin_id,
       </if>
-      <if test="adminCode != null">
+      <if test="admin_code != null">
         admin_code,
       </if>
       <if test="password != null">
@@ -44,11 +44,11 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="adminId != null">
-        #{adminId,jdbcType=INTEGER},
+      <if test="admin_id != null">
+        #{admin_id,jdbcType=INTEGER},
       </if>
-      <if test="adminCode != null">
-        #{adminCode,jdbcType=VARCHAR},
+      <if test="admin_code != null">
+        #{admin_code,jdbcType=VARCHAR},
       </if>
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
@@ -67,13 +67,20 @@
       </if>
     </trim>
   </insert>
+  <update id="updateUser">
+    UPDATE admin_info SET name=#{name},telephone=#{telephone},email=#{email}
+    where admin_id=#{admin_id}
+  </update>
 
   <select id="checkUser" resultMap="adminMap">
-    SELECT * FROM admin_info WHERE admin_code = #{adminCode} and password = #{password}
+    SELECT * FROM admin_info WHERE admin_code = #{admin_code} and password = #{password}
   </select>
 
   <select id="getModule" resultMap="com.lanou.mapper.ModuleInfoMapper.moduleMap">
-    SELECT DISTINCT mi.module_id,mi.name FROM admin_info ai,admin_role ar,role_module rm,module_info mi WHERE ai.admin_id=#{adminId} and ai.admin_id=ar.admin_id AND ar.role_id=rm.role_id AND rm.module_id =mi.module_id order by mi.module_id asc
+    SELECT DISTINCT mi.module_id,mi.name FROM admin_info ai,admin_role ar,role_module rm,module_info mi WHERE ai.admin_id=#{admin_id} and ai.admin_id=ar.admin_id AND ar.role_id=rm.role_id AND rm.module_id =mi.module_id order by mi.module_id asc
+  </select>
+  <select id="getUser" resultType="com.lanou.login.bean.AdminInfo">
+    SELECT * FROM admin_info WHERE admin_id=#{admin_id}
   </select>
 
 </mapper>

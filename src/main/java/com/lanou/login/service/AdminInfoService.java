@@ -14,4 +14,6 @@ public interface AdminInfoService {
     AdminInfo checkUser(AdminInfo admin);
 
     List<ModuleInfo> getModule(int adminId);
+
+
 }

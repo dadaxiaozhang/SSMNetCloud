@@ -4,9 +4,9 @@ package com.lanou.login.bean;
 import java.sql.Date;
 
 public class AdminInfo {
-    private Integer adminId;
+    private Integer admin_id;
 
-    private String adminCode;
+    private String admin_code;
 
     private String password;
 
@@ -24,8 +24,8 @@ public class AdminInfo {
     @Override
     public String toString() {
         return "AdminInfo{" +
-                "adminId=" + adminId +
-                ", adminCode='" + adminCode + '\'' +
+                "admin_id=" + admin_id +
+                ", admin_code='" + admin_code + '\'' +
                 ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", telephone='" + telephone + '\'' +
@@ -34,20 +34,20 @@ public class AdminInfo {
                 '}';
     }
 
-    public Integer getAdminId() {
-        return adminId;
+    public Integer getAdmin_id() {
+        return admin_id;
     }
 
-    public void setAdminId(Integer adminId) {
-        this.adminId = adminId;
+    public void setAdmin_id(Integer admin_id) {
+        this.admin_id = admin_id;
     }
 
-    public String getAdminCode() {
-        return adminCode;
+    public String getAdmin_code() {
+        return admin_code;
     }
 
-    public void setAdminCode(String adminCode) {
-        this.adminCode = adminCode == null ? null : adminCode.trim();
+    public void setAdmin_code(String admin_code) {
+        this.admin_code = admin_code == null ? null : admin_code.trim();
     }
 
     public String getPassword() {

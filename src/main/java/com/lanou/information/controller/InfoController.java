@@ -1,10 +1,13 @@
 package com.lanou.information.controller;
 
+import com.lanou.information.service.Impl.InfoServiceImpl;
+import com.lanou.login.bean.AdminInfo;
 import com.lanou.utils.AjaxResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -13,6 +16,9 @@ import javax.servlet.http.HttpSession;
  */
 @Controller
 public class InfoController {
+
+    @Resource(name = "InfoService")
+    private InfoServiceImpl InfoService;
 
     //    获取个人信息
     @RequestMapping(value = "/getInfo")
@@ -29,5 +35,26 @@ public class InfoController {
     public String PersonalPage() {
 
         return "user/user_info";
+    }
+
+//    个人信息的更改功能
+    @RequestMapping(value = "/update")
+    public String updateInfo(HttpSession session, AdminInfo admin){
+
+        AdminInfo admin1 = (AdminInfo) session.getAttribute("loginAdmin");
+        admin.setAdmin_id(admin1.getAdmin_id());
+        InfoService.updateUser(admin);
+        AdminInfo adminInfo = InfoService.getUser(admin1);
+        session.removeAttribute("loginAdmin");
+        session.setAttribute("loginAdmin",adminInfo);
+
+        return "/user/user_info";
+    }
+
+//    修改密码页跳转
+    @RequestMapping("/updatePwd")
+    public String updatePwd(){
+
+        return "user/user_modi_pwd";
     }
 }
