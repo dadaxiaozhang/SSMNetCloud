@@ -1,6 +1,7 @@
 package com.lanou.login.bean;
 
-import java.util.Date;
+
+import java.sql.Date;
 
 public class AdminInfo {
     private Integer adminId;

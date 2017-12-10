@@ -73,7 +73,7 @@
   </select>
 
   <select id="getModule" resultMap="com.lanou.mapper.ModuleInfoMapper.moduleMap">
-    SELECT mi.module_id,mi.name FROM admin_info ai,admin_role ar,role_module rm,module_info mi WHERE ai.admin_id=#{adminId} and ai.admin_id=ar.admin_id AND ar.role_id=rm.role_id AND rm.module_id =mi.module_id
+    SELECT DISTINCT mi.module_id,mi.name FROM admin_info ai,admin_role ar,role_module rm,module_info mi WHERE ai.admin_id=#{adminId} and ai.admin_id=ar.admin_id AND ar.role_id=rm.role_id AND rm.module_id =mi.module_id order by mi.module_id asc
   </select>
 
 </mapper>

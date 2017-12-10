@@ -8,6 +8,14 @@ public class ModuleInfo {
     public ModuleInfo() {
     }
 
+    @Override
+    public String toString() {
+        return "ModuleInfo{" +
+                "moduleId=" + moduleId +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
     public Integer getModuleId() {
         return moduleId;
     }

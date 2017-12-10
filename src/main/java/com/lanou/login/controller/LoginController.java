@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,14 +56,16 @@ public class LoginController {
             }
 
             AdminInfo adminOut = adminInfoService.checkUser(admin);
-            System.out.println(adminOut);
+            System.out.println(adminOut+"**********");
             List<ModuleInfo> moduleInfoList = adminInfoService.getModule(adminOut.getAdminId());
-            session.setAttribute("loginAccess",moduleInfoList);
+
+            session.setAttribute("loginAccess", moduleInfoList);
             session.setAttribute("loginAdmin", adminOut);
 
             if (adminOut != null && code.trim().equalsIgnoreCase(codeContent)) {
 
                 ajaxResult.setErrorCode(200);
+
 
             } else {
                 ajaxResult.setErrorCode(404);
@@ -73,12 +76,17 @@ public class LoginController {
         return ajaxResult;
     }
 
-    //登录
-    @RequestMapping("/index")
-    public String frontPage(){
-
-        return "index";
+    //注销账号跳转到登录页面清除Session里的用户信息
+    @RequestMapping(value = "/exit")
+    public String exit(HttpSession session)
+    {
+        session.removeAttribute("loginAccess");
+        session.removeAttribute("loginAdmin");
+        return "login";
     }
+
+
+
 
     public String getCodeContent() {
         return codeContent;

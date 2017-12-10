@@ -1,6 +1,7 @@
 package com.lanou.bean;
 
-import java.util.Date;
+
+import java.sql.Date;
 
 public class Cost {
     private Integer costId;
