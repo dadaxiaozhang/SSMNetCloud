@@ -1,86 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lanou.login.mapper.AdminInfoMapper">
-  <resultMap id="adminMap" type="com.lanou.login.bean.AdminInfo">
-    <result column="admin_id" jdbcType="INTEGER" property="admin_id" />
-    <result column="admin_code" jdbcType="VARCHAR" property="admin_code" />
-    <result column="password" jdbcType="VARCHAR" property="password" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="telephone" jdbcType="VARCHAR" property="telephone" />
-    <result column="email" jdbcType="VARCHAR" property="email" />
-    <result column="enrolldate" jdbcType="TIMESTAMP" property="enrolldate" />
-  </resultMap>
-  <insert id="insert" parameterType="com.lanou.login.bean.AdminInfo">
-    insert into admin_info (admin_id, admin_code, password, 
-      name, telephone, email, 
-      enrolldate)
-    values (#{admin_id,jdbcType=INTEGER}, #{admin_code,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-      #{name,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
-      #{enrolldate,jdbcType=TIMESTAMP})
-  </insert>
-  <insert id="insertSelective" parameterType="com.lanou.login.bean.AdminInfo">
-    insert into admin_info
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="admin_id != null">
-        admin_id,
-      </if>
-      <if test="admin_code != null">
-        admin_code,
-      </if>
-      <if test="password != null">
-        password,
-      </if>
-      <if test="name != null">
-        name,
-      </if>
-      <if test="telephone != null">
-        telephone,
-      </if>
-      <if test="email != null">
-        email,
-      </if>
-      <if test="enrolldate != null">
-        enrolldate,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="admin_id != null">
-        #{admin_id,jdbcType=INTEGER},
-      </if>
-      <if test="admin_code != null">
-        #{admin_code,jdbcType=VARCHAR},
-      </if>
-      <if test="password != null">
-        #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
-      </if>
-      <if test="telephone != null">
-        #{telephone,jdbcType=VARCHAR},
-      </if>
-      <if test="email != null">
-        #{email,jdbcType=VARCHAR},
-      </if>
-      <if test="enrolldate != null">
-        #{enrolldate,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateUser">
-    UPDATE admin_info SET name=#{name},telephone=#{telephone},email=#{email}
-    where admin_id=#{admin_id}
-  </update>
+    <resultMap id="adminMap" type="com.lanou.login.bean.AdminInfo">
+        <result column="admin_id" jdbcType="INTEGER" property="admin_id"/>
+        <result column="admin_code" jdbcType="VARCHAR" property="admin_code"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="enrolldate" jdbcType="TIMESTAMP" property="enrolldate"/>
+    </resultMap>
+    <resultMap id="adminList" type="com.lanou.admin.bean.AdminList">
+        <result column="admin_id" jdbcType="INTEGER" property="admin_id"/>
+        <result column="admin_code" jdbcType="VARCHAR" property="admin_code"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="enrolldate" jdbcType="TIMESTAMP" property="enrolldate"/>
+        <result column="role_id" jdbcType="INTEGER" property="role_id"/>
+        <result column="role_name" jdbcType="VARCHAR" property="role_name"/>
+        <result column="module_name" jdbcType="VARCHAR" property="access_info"/>
+    </resultMap>
+    <insert id="insert" parameterType="com.lanou.login.bean.AdminInfo">
+        INSERT INTO admin_info ( admin_code, password,
+                                name, telephone, email,
+                                enrolldate)
+        VALUES ( #{admin_code,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+                #{name,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+                #{enrolldate,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.lanou.login.bean.AdminInfo">
+        insert into admin_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="admin_id != null">
+                admin_id,
+            </if>
+            <if test="admin_code != null">
+                admin_code,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="telephone != null">
+                telephone,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="enrolldate != null">
+                enrolldate,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="admin_id != null">
+                #{admin_id,jdbcType=INTEGER},
+            </if>
+            <if test="admin_code != null">
+                #{admin_code,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null">
+                #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="enrolldate != null">
+                #{enrolldate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateUser">
+        UPDATE admin_info
+        SET name = #{name}, telephone = #{telephone}, email = #{email}
+        WHERE admin_id = #{admin_id}
+    </update>
+    <update id="updatePwd">
+        UPDATE admin_info
+        SET password = #{password}
+        WHERE admin_id = #{admin_id}
+    </update>
 
-  <select id="checkUser" resultMap="adminMap">
-    SELECT * FROM admin_info WHERE admin_code = #{admin_code} and password = #{password}
-  </select>
+    <select id="checkUser" resultMap="adminMap">
+        SELECT *
+        FROM admin_info
+        WHERE admin_code = #{admin_code} AND password = #{password}
+    </select>
 
-  <select id="getModule" resultMap="com.lanou.mapper.ModuleInfoMapper.moduleMap">
-    SELECT DISTINCT mi.module_id,mi.name FROM admin_info ai,admin_role ar,role_module rm,module_info mi WHERE ai.admin_id=#{admin_id} and ai.admin_id=ar.admin_id AND ar.role_id=rm.role_id AND rm.module_id =mi.module_id order by mi.module_id asc
-  </select>
-  <select id="getUser" resultType="com.lanou.login.bean.AdminInfo">
-    SELECT * FROM admin_info WHERE admin_id=#{admin_id}
-  </select>
+    <select id="getModule" resultMap="com.lanou.mapper.ModuleInfoMapper.moduleMap">
+        SELECT DISTINCT
+            mi.module_id,
+            mi.name
+        FROM admin_info ai, admin_role ar, role_module rm, module_info mi
+        WHERE ai.admin_id = #{admin_id} AND ai.admin_id = ar.admin_id AND ar.role_id = rm.role_id AND
+              rm.module_id = mi.module_id
+        ORDER BY mi.module_id ASC
+    </select>
+    <select id="getUser" resultMap="adminMap">
+        SELECT *
+        FROM admin_info
+        WHERE admin_id = #{admin_id}
+    </select>
+
+    <select id="getAdmin" resultMap="adminList">
+        SELECT
+            ai.*,
+            group_concat(DISTINCT rl.name SEPARATOR ',') role_name
+        FROM role_info rl, role_module rm, module_info mi, admin_info ai, admin_role ar
+        WHERE ai.admin_id = ar.admin_id AND
+              ar.role_id = rm.role_id AND rm.role_id = rl.role_id AND rl.role_id = rm.role_id AND
+              mi.module_id = rm.module_id
+        GROUP BY ai.admin_id
+    </select>
+    <select id="getAdminCodebyid" resultType="java.lang.Integer">
+        SELECT admin_id FROM admin_info WHERE admin_code=#{admin_code}
+    </select>
+
 
 </mapper>

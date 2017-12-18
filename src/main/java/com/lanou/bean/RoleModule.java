@@ -5,6 +5,17 @@ public class RoleModule {
 
     private Integer moduleId;
 
+    public RoleModule() {
+    }
+
+    @Override
+    public String toString() {
+        return "RoleModule{" +
+                "roleId=" + roleId +
+                ", moduleId=" + moduleId +
+                '}';
+    }
+
     public Integer getRoleId() {
         return roleId;
     }

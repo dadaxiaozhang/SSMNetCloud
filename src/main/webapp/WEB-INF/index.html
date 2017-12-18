@@ -21,9 +21,9 @@
                     var array = result.data[i];
 
                     if (array.moduleId ===1) {
-                        div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/role/role_list.html" class="role_off"></a></li>';
+                        div.innerHTML = div.innerHTML + '<li><a href="/role_info" class="role_off"></a></li>';
                     } else if (array.moduleId === 2) {
-                        div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/admin/admin_list.html" class="admin_off"></a></li>';
+                        div.innerHTML = div.innerHTML + '<li><a href="/toAdmin" class="admin_off"></a></li>';
                     }
                     else if (array.moduleId === 3) {
                         div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/fee/fee_list.html" class="fee_off"></a></li>';

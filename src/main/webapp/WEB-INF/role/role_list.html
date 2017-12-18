@@ -1,115 +1,184 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title></title>
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css" />
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css" /> 
-        <script language="javascript" type="text/javascript">
-            function deleteRole() {
-                var r = window.confirm("确定要删除此角色吗？");
-                document.getElementById("operate_result_info").style.display = "block";
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
+    <script type="text/javascript" src="/js/jquery-3.2.1.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+
+            $.ajax({
+
+                url: "/getRole",
+                success: function (result) {
+
+                    console.log(result);
+
+                    for (var i = 0; i < result.data.length; i++) {
+                        var div = document.getElementById("datalist");
+                        var name=result.data[i].role_name;
+                        var str=result.data[i].access_info;
+                        div.innerHTML = div.innerHTML + '<tr><td>' + result.data[i].role_id + '</td><td>' + result.data[i].role_name + '</td><td>' + result.data[i].access_info + '</td>' +
+                                "<td><input type='button' value='修改' class='btn_modify' onclick='toupdateRole(\""+result.data[i].role_id+"\",\""+name+"\",\""+str+"\")'/>" +
+                                "<input type='button' value='删除' class='btn_delete' onclick='delRole(\""+result.data[i].role_id+"\")'/></td></tr>";
+
+                    }
+                }
+
+
+            });
+
+            $.ajax({
+                url: "/getAccess",
+                success: function (result) {
+
+                    var div = document.getElementById("menu");
+                    div.innerHTML = '<li><a href="/index" onclick="window.location.reload()" class="index_on"></a></li>';
+                    var access = "";
+                    for (var i = 0; i < result.data.length; i++) {
+
+                        var array = result.data[i];
+                        if (i == 0) {
+                            access = access + result.data[i].name
+                        } else {
+                            access = access + "," + result.data[i].name
+                        }
+
+                        if (array.moduleId === 1) {
+                            div.innerHTML = div.innerHTML + '<li><a href="/role_info" class="role_off"></a></li>';
+                        } else if (array.moduleId === 2) {
+                            div.innerHTML = div.innerHTML + '<li><a href="/toAdmin" class="admin_off"></a></li>';
+                        }
+                        else if (array.moduleId === 3) {
+                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/fee/fee_list.html" class="fee_off"></a></li>';
+                        } else if (array.moduleId === 4) {
+                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/account/account_list.html" class="account_off"></a></li>';
+                        } else if (array.moduleId === 5) {
+                            div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/service/service_list.html" class="service_off"></a></li>';
+                        } else if (array.moduleId === 6) {
+                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/bill/bill_list.html" class="bill_off"></a></li>';
+                        } else if (array.moduleId === 7) {
+                            div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/report/report_list.html" class="report_off"></a></li>';
+                        }
+                    }
+                    div.innerHTML = div.innerHTML + ' <li><a href="/user_info" class="information_off"></a></li>' + ' <li><a href="/updatePwd" class="password_off"></a></li>';
+
+                    $("#access").val(access);
+                }
+            });
+        });
+
+        function delRole(role_id) {
+            var r=window.confirm("确定要删除此角色么？");
+            var roleId=role_id;
+            if (r){
+
+                $.ajax({
+
+                    url:"/deleteRole",
+                    data:{
+
+                        roleId:roleId
+                    },
+
+                    success:function (result) {
+
+                        if(result.errorCode==200){
+
+                            document.getElementById("operate_result_info").style.display = "block";
+                        }
+                    }
+
+                })
+
+
             }
-        </script>
-    </head>
-    <body>
-        <!--Logo区域开始-->
-        <div id="header">
-            <img src="../images/logo.png" alt="logo" class="left"/>
-            <a href="#">[退出]</a>            
+
+        }
+        function toupdateRole(roleid,rolename,accessinfo) {
+
+            console.log(roleid);
+            console.log(rolename);
+            console.log(accessinfo);
+            $.ajax({
+                url:"/jumpToUpdate",
+                data:{
+                    role_id:roleid,
+                    role_name:encodeURI(rolename),
+                    access_info:encodeURI(accessinfo)
+                },
+
+                success:function (result) {
+                    if (result.errorCode==200){
+                        location.href="/toUpdateRole";
+                    }
+
+                }
+
+            })
+        }
+
+    </script>
+
+</head>
+<body>
+<!--Logo区域开始-->
+<div id="header">
+    <img src="../images/logo.png" alt="logo" class="left"/>
+    <a href="/exit">[退出]</a>
+</div>
+<!--Logo区域结束-->
+<!--导航区域开始-->
+<div id="navi">
+    <ul id="menu">
+
+    </ul>
+</div>
+<!--导航区域结束-->
+<!--主要区域开始-->
+<div id="main">
+    <form action="" method="">
+        <!--查询-->
+        <div class="search_add">
+            <input type="button" value="增加" class="btn_add" onclick="location.href='/addRole';"/>
         </div>
-        <!--Logo区域结束-->
-        <!--导航区域开始-->
-        <div id="navi">                        
-            <ul id="menu">
-                <li><a href="../index.html" class="index_off"></a></li>
-                <li><a href="../role/role_list.html" class="role_on"></a></li>
-                <li><a href="../admin/admin_list.html" class="admin_off"></a></li>
-                <li><a href="../fee/fee_list.html" class="fee_off"></a></li>
-                <li><a href="../account/account_list.html" class="account_off"></a></li>
-                <li><a href="../service/service_list.html" class="service_off"></a></li>
-                <li><a href="../bill/bill_list.html" class="bill_off"></a></li>
-                <li><a href="../report/report_list.html" class="report_off"></a></li>
-                <li><a href="../user/user_info.html" class="information_off"></a></li>
-                <li><a href="../user/user_modi_pwd.html" class="password_off"></a></li>
-            </ul>            
+        <!--删除的操作提示-->
+        <div id="operate_result_info" class="operate_success">
+            <img src="../images/close.png" onclick="this.parentNode.style.display='none';"/>
+            删除成功！
+        </div> <!--删除错误！该角色被使用，不能删除。-->
+        <!--数据区域：用表格展示数据-->
+        <div id="data">
+            <table id="datalist">
+                <tr>
+                    <th>角色 ID</th>
+                    <th>角色名称</th>
+                    <th class="width600">拥有的权限</th>
+                    <th class="td_modi"></th>
+                </tr>
+
+            </table>
         </div>
-        <!--导航区域结束-->
-        <!--主要区域开始-->
-        <div id="main">
-            <form action="" method="">
-                <!--查询-->
-                <div class="search_add">
-                    <input type="button" value="增加" class="btn_add" onclick="location.href='role_add.html';" />
-                </div>  
-                <!--删除的操作提示-->
-                <div id="operate_result_info" class="operate_success">
-                    <img src="../images/close.png" onclick="this.parentNode.style.display='none';" />
-                    删除成功！
-                </div> <!--删除错误！该角色被使用，不能删除。-->
-                <!--数据区域：用表格展示数据-->     
-                <div id="data">                      
-                    <table id="datalist">
-                        <tr>                            
-                            <th>角色 ID</th>
-                            <th>角色名称</th>
-                            <th class="width600">拥有的权限</th>
-                            <th class="td_modi"></th>
-                        </tr>                      
-                        <tr>
-                            <td>1</td>
-                            <td>贾强</td>
-                            <td>角色管理、管理员管理、资费管理、账务账号、业务账号、账单、报表</td>
-                            <td>
-                                <input type="button" value="修改" class="btn_modify" onclick="location.href='role_modi.html';"/>
-                                <input type="button" value="删除" class="btn_delete" onclick="deleteRole();" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>贾强</td>
-                            <td>超级管理员、账单管理员</td>
-                            <td>
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>贾强</td>
-                            <td>超级管理员、账单管理员</td>
-                            <td>
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>贾强</td>
-                            <td>超级管理员、账单管理员</td>
-                            <td>
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                    </table>
-                </div> 
-                <!--分页-->
-                <div id="pages">
-        	        <a href="#">上一页</a>
-                    <a href="#" class="current_page">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#">下一页</a>
-                </div>
-            </form>
+        <!--分页-->
+        <div id="pages">
+            <a href="#">上一页</a>
+            <a href="#" class="current_page">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+            <a href="#">下一页</a>
         </div>
-        <!--主要区域结束-->
-        <div id="footer">
-            <p>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</p>
-            <p>版权所有(C)云科技有限公司 </p>
-        </div>
-    </body>
+    </form>
+</div>
+<!--主要区域结束-->
+<div id="footer">
+    <p>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</p>
+    <p>版权所有(C)云科技有限公司 </p>
+</div>
+</body>
 </html>

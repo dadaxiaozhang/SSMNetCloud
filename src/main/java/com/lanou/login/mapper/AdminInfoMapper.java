@@ -1,5 +1,6 @@
 package com.lanou.login.mapper;
 
+import com.lanou.admin.bean.AdminList;
 import com.lanou.login.bean.AdminInfo;
 import com.lanou.bean.ModuleInfo;
 
@@ -20,4 +21,10 @@ public interface AdminInfoMapper {
     void updateUser(AdminInfo admin);
 //    根据用户id查询用户信息
     AdminInfo getUser(AdminInfo admin);
+//    修改密码
+    void updatePwd(AdminInfo admin);
+//    获取所有管理员信息
+    List<AdminList> getAdmin();
+//    根据账户名获取管理员id
+    Integer getAdminCodebyid(String admin_code);
 }

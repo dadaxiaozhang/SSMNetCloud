@@ -1,5 +1,7 @@
 package com.lanou.login.service;
 
+import com.lanou.admin.bean.AdminList;
+import com.lanou.bean.AdminRole;
 import com.lanou.login.bean.AdminInfo;
 import com.lanou.bean.ModuleInfo;
 
@@ -15,5 +17,12 @@ public interface AdminInfoService {
 
     List<ModuleInfo> getModule(int adminId);
 
+    List<AdminList> getAdmin();
+
+    int insert(AdminInfo record);
+
+    Integer getAdminCodebyid(String admin_code);
+
+    int insert(AdminRole record);
 
 }

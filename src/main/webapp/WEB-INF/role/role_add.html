@@ -1,86 +1,225 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title></title>
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css" />
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css" />
-        <script language="javascript" type="text/javascript">
-            //保存成功的提示消息
-            function showResult() {
-                showResultDiv(true);
-                window.setTimeout("showResultDiv(false);", 3000);
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
+    <script type="text/javascript" src="/js/jquery-3.2.1.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+            $("span.required").hide();
+
+            $.ajax({
+                url: "/getAccess",
+                success: function (result) {
+
+                    var div = document.getElementById("menu");
+                    div.innerHTML = '<li><a href="/index" onclick="window.location.reload()" class="index_on"></a></li>';
+                    var access = "";
+                    for (var i = 0; i < result.data.length; i++) {
+
+                        var array = result.data[i];
+                        if (i == 0) {
+                            access = access + result.data[i].name
+                        } else {
+                            access = access + "," + result.data[i].name
+                        }
+
+                        if (array.moduleId === 1) {
+                            div.innerHTML = div.innerHTML + '<li><a href="/role_info" class="role_off"></a></li>';
+                        } else if (array.moduleId === 2) {
+                            div.innerHTML = div.innerHTML + '<li><a href="/toAdmin" class="admin_off"></a></li>';
+                        }
+                        else if (array.moduleId === 3) {
+                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/fee/fee_list.html" class="fee_off"></a></li>';
+                        } else if (array.moduleId === 4) {
+                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/account/account_list.html" class="account_off"></a></li>';
+                        } else if (array.moduleId === 5) {
+                            div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/service/service_list.html" class="service_off"></a></li>';
+                        } else if (array.moduleId === 6) {
+                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/bill/bill_list.html" class="bill_off"></a></li>';
+                        } else if (array.moduleId === 7) {
+                            div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/report/report_list.html" class="report_off"></a></li>';
+                        }
+                    }
+                    div.innerHTML = div.innerHTML + ' <li><a href="/user_info" class="information_off"></a></li>' + ' <li><a href="/updatePwd" class="password_off"></a></li>';
+
+                    $("#access").val(access);
+                }
+            });
+        })
+
+        //保存成功的提示消息
+        function showResult() {
+            showResultDiv(true);
+            window.setTimeout("showResultDiv(false);", 3000);
+        }
+        function showResultDiv(flag) {
+            var divResult = document.getElementById("save_result_info");
+            if (flag)
+                divResult.style.display = "block";
+            else
+                divResult.style.display = "none";
+        }
+
+        function addRole() {
+
+            $("#role_name_error").empty();
+            $("#check_error").empty();
+            $("span.required").hide();
+            var name = $("#role_name").val();
+            var nameVerify=/^[a-zA-Z\u4e00-\u9fa5]{3,20}$/;
+
+            if (name == "") {
+                $("#role_name_error").text("请输入角色姓名");
+                $("span.required").show();
+                return;
             }
-            function showResultDiv(flag) {
-                var divResult = document.getElementById("save_result_info");
-                if (flag)
-                    divResult.style.display = "block";
-                else
-                    divResult.style.display = "none";
+
+            if (!nameVerify.exec(name)){
+                $("#role_name_error").text("20长度以内的汉字、字母的组合");
+                $("span.required").show();
+                return;
             }
-        </script>
-    </head>
-    <body>
-        <!--Logo区域开始-->
-        <div id="header">
-            <img src="../images/logo.png" alt="logo" class="left"/>
-            <a href="#">[退出]</a>            
+
+            var check_acess = $('input:checkbox[id="check_acess"]:checked').val();
+            var check_role = $('input:checkbox[id="check_role"]:checked').val();
+            var check_cost = $('input:checkbox[id="check_cost"]:checked').val();
+            var check_account = $('input:checkbox[id="check_account"]:checked').val();
+            var check_service = $('input:checkbox[id="check_service"]:checked').val();
+            var check_bill = $('input:checkbox[id="check_bill"]:checked').val();
+            var check_statement = $('input:checkbox[id="check_statement"]:checked').val();
+
+            if ($("input:checkbox[id='check_acess']").is(':checked') == false) {
+                check_acess = 0;
+            }
+            if ($("input:checkbox[id='check_role']").is(':checked') == false) {
+                check_role = 0;
+            }
+            if ($("input:checkbox[id='check_cost']").is(':checked') == false) {
+                check_cost = 0;
+            }
+            if ($("input:checkbox[id='check_account']").is(':checked') == false) {
+                check_account = 0;
+            }
+            if ($("input:checkbox[id='check_service']").is(':checked') == false) {
+                check_service = 0;
+            }
+            if ($("input:checkbox[id='check_bill']").is(':checked') == false) {
+                check_bill = 0;
+            }
+
+            if ($("input:checkbox[id='check_statement']").is(':checked') == false) {
+                check_statement = 0;
+            }
+
+
+
+            $.ajax({
+
+                type: "post",
+                url: "/addRoleInfo",
+                data: {
+
+                    "moduleIdList[0].mudule_id": check_acess,
+                    "moduleIdList[1].mudule_id": check_role,
+                    "moduleIdList[2].mudule_id": check_cost,
+                    "moduleIdList[3].mudule_id": check_account,
+                    "moduleIdList[4].mudule_id": check_service,
+                    "moduleIdList[5].mudule_id": check_bill,
+                    "moduleIdList[6].mudule_id": check_statement,
+                    "name": name
+                },
+
+                success: function (result) {
+
+                    console.log(result);
+                    if (result.errorCode==404){
+                        $("#role_name_error").text(result.msg);
+                        $("span.required").show();
+                        return
+                    }
+                    if (result.errorCode==405){
+                        $("#check_error").text(result.msg);
+                        $("span.required").show();
+                        return
+                    }
+                    if (result.errorCode==200){
+                        showResult();
+                    }
+
+                }
+
+
+            })
+
+        }
+        //回车时，默认是保存
+        function on_return() {
+            if (window.event.keyCode == 13) {
+                if (document.all('saveRole') != null) {
+                    document.all('saveRole').click();
+                }
+            }
+        }
+    </script>
+
+</head>
+<body onkeydown="on_return()">
+<!--Logo区域开始-->
+<div id="header">
+    <img src="../images/logo.png" alt="logo" class="left"/>
+    <a href="/exit">[退出]</a>
+</div>
+<!--Logo区域结束-->
+<!--导航区域开始-->
+<div id="navi">
+    <ul id="menu">
+
+    </ul>
+</div>
+<!--导航区域结束-->
+<!--主要区域开始-->
+<div id="main">
+    <!--保存操作后的提示信息：成功或者失败-->
+    <div id="save_result_info" class="save_success">保存成功！</div><!--保存失败，角色名称重复！-->
+    <form action="" method="" class="main_form">
+        <div class="text_info clearfix"><span>角色名称：</span></div>
+        <div class="input_info">
+            <input type="text" class="width200" id="role_name"/>
+            <span class="required">*</span>
+            <div class="validate_msg_medium" id="role_name_error"></div>
         </div>
-        <!--Logo区域结束-->
-        <!--导航区域开始-->
-        <div id="navi">
-            <ul id="menu">
-                <li><a href="../index.html" class="index_off"></a></li>
-                <li><a href="../role/role_list.html" class="role_on"></a></li>
-                <li><a href="../admin/admin_list.html" class="admin_off"></a></li>
-                <li><a href="../fee/fee_list.html" class="fee_off"></a></li>
-                <li><a href="../account/account_list.html" class="account_off"></a></li>
-                <li><a href="../service/service_list.html" class="service_off"></a></li>
-                <li><a href="../bill/bill_list.html" class="bill_off"></a></li>
-                <li><a href="../report/report_list.html" class="report_off"></a></li>
-                <li><a href="../user/user_info.html" class="information_off"></a></li>
-                <li><a href="../user/user_modi_pwd.html" class="password_off"></a></li>
-            </ul>
+        <div class="text_info clearfix"><span>设置权限：</span></div>
+        <div class="input_info_high">
+            <div class="input_info_scroll">
+                <ul>
+                    <li><input type="checkbox" id="check_acess" value="2"/>管理员管理</li>
+                    <li><input type="checkbox" id="check_role" value="1"/>角色管理</li>
+                    <li><input type="checkbox" id="check_cost" value="3"/>资费管理</li>
+                    <li><input type="checkbox" id="check_account" value="4"/>账务账号</li>
+                    <li><input type="checkbox" id="check_service" value="5"/>业务账号</li>
+                    <li><input type="checkbox" id="check_bill" value="6"/>账单</li>
+                    <li><input type="checkbox" id="check_statement" value="7"/>报表</li>
+                </ul>
+            </div>
+            <span class="required">*</span>
+            <div class="validate_msg_tiny" id="check_error"></div>
         </div>
-        <!--导航区域结束-->
-        <!--主要区域开始-->
-        <div id="main">            
-            <!--保存操作后的提示信息：成功或者失败-->
-            <div id="save_result_info" class="save_success">保存成功！</div><!--保存失败，角色名称重复！-->
-            <form action="" method="" class="main_form">
-                <div class="text_info clearfix"><span>角色名称：</span></div>
-                <div class="input_info">
-                    <input type="text" class="width200" />
-                    <span class="required">*</span>
-                    <div class="validate_msg_medium">不能为空，且为20长度的字母、数字和汉字的组合</div>
-                </div>                    
-                <div class="text_info clearfix"><span>设置权限：</span></div>
-                <div class="input_info_high">
-                    <div class="input_info_scroll">
-                        <ul>
-                            <li><input type="checkbox" />管理员管理</li>
-                            <li><input type="checkbox" />角色管理</li>
-                            <li><input type="checkbox" />资费管理</li>
-                            <li><input type="checkbox" />账务账号</li>
-                            <li><input type="checkbox" />业务账号</li>
-                            <li><input type="checkbox" />账单</li>
-                            <li><input type="checkbox" />报表</li>
-                        </ul>
-                    </div>
-                    <span class="required">*</span>
-                    <div class="validate_msg_tiny">至少选择一个权限</div>
-                </div>
-                <div class="button_info clearfix">
-                    <input type="button" value="保存" class="btn_save" onclick="showResult();" />
-                    <input type="button" value="取消" class="btn_save" />
-                </div>
-            </form>
+        <div class="button_info clearfix">
+            <input type="button" id="saveRole" value="保存" class="btn_save" onclick="addRole();"/>
+            <input type="button" value="取消" class="btn_save" onclick="location.href='/addRole'"/>
         </div>
-        <!--主要区域结束-->
-        <div id="footer">
-            <span>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</span>
-            <br />
-            <span>版权所有(C)云科技有限公司 </span>
-        </div>
-    </body>
+    </form>
+</div>
+<!--主要区域结束-->
+<div id="footer">
+    <span>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</span>
+    <br/>
+    <span>版权所有(C)云科技有限公司 </span>
+</div>
+</body>
 </html>

@@ -5,6 +5,17 @@ public class AdminRole {
 
     private Integer roleId;
 
+    public AdminRole() {
+    }
+
+    @Override
+    public String toString() {
+        return "AdminRole{" +
+                "adminId=" + adminId +
+                ", roleId=" + roleId +
+                '}';
+    }
+
     public Integer getAdminId() {
         return adminId;
     }

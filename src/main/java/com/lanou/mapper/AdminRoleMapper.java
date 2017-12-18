@@ -7,5 +7,4 @@ public interface AdminRoleMapper {
 
     int insertSelective(AdminRole record);
 
-
 }

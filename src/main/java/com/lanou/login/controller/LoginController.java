@@ -55,15 +55,13 @@ public class LoginController {
 
             AdminInfo adminOut = adminInfoService.checkUser(admin);
 
-            List<ModuleInfo> moduleInfoList = adminInfoService.getModule(adminOut.getAdmin_id());
 
-            session.setAttribute("loginAccess", moduleInfoList);
             session.setAttribute("loginAdmin", adminOut);
 
-            if (adminOut != null && code.trim().equalsIgnoreCase(codeContent)) {
-
+            if (adminOut !=null && code.trim().equalsIgnoreCase(codeContent)) {
+                List<ModuleInfo> moduleInfoList = adminInfoService.getModule(adminOut.getAdmin_id());
+                session.setAttribute("loginAccess", moduleInfoList);
                 ajaxResult.setErrorCode(200);
-
 
             } else {
                 ajaxResult.setErrorCode(404);

@@ -51,10 +51,4 @@ public class InfoController {
         return "/user/user_info";
     }
 
-//    修改密码页跳转
-    @RequestMapping("/updatePwd")
-    public String updatePwd(){
-
-        return "user/user_modi_pwd";
-    }
 }

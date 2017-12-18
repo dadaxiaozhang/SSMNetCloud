@@ -28,4 +28,8 @@
       </if>
     </trim>
   </insert>
+
+    <delete id="deleteRm">
+      DELETE FROM role_module WHERE role_id=#{roleId}
+    </delete>
 </mapper>

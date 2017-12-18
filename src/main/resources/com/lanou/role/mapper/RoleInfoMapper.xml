@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lanou.role.mapper.RoleInfoMapper">
+  <resultMap id="RoleMap" type="com.lanou.role.bean.RoleInfo">
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+  <resultMap id="RoleList" type="com.lanou.role.bean.RoleList">
+    <result column="role_id" jdbcType="INTEGER" property="role_id"/>
+    <result column="role_name" jdbcType="VARCHAR" property="role_name"/>
+    <result column="module_name" jdbcType="VARCHAR" property="access_info"/>
+  </resultMap>
+  <insert id="insert">
+    insert into role_info (name)
+    values (#{name,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lanou.role.bean.RoleInfo">
+    insert into role_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+    <update id="updateRole">
+      UPDATE role_info SET name=#{name} where role_id=#{roleId}
+    </update>
+
+    <delete id="deleteRole">
+    DELETE FROM role_info WHERE role_id=#{roleId}
+  </delete>
+
+  <!--GROUP_CONCAT()函数 用来合并重复id的结果集贼好用-->
+  <select id="getRole" resultMap="RoleList">
+    SELECT DISTINCT rl.role_id role_id,rl.name role_name,GROUP_CONCAT(mi.name separator '、') module_name FROM role_info rl,role_module rm,module_info mi
+    WHERE rl.role_id=rm.role_id AND mi.module_id =rm.module_id
+    GROUP BY rl.role_id
+  </select>
+  <select id="getRoleByName" resultMap="RoleMap">
+    SELECT * FROM role_info WHERE name=#{name}
+  </select>
+</mapper>

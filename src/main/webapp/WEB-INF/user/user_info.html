@@ -10,6 +10,8 @@
     <script type="text/javascript">
 
         $(function () {
+            $("span.required").hide();
+
             $.ajax({
 
                 url:"/getInfo",
@@ -24,6 +26,8 @@
                     $("#email").val(resultData.data.email);
                     $("#enrolldate").val(date);
                 }
+
+
 
             })
 
@@ -44,9 +48,9 @@
                         }
 
                         if (array.moduleId === 1) {
-                            div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/role/role_list.html" class="role_off"></a></li>';
+                            div.innerHTML = div.innerHTML + '<li><a href="/role_info" class="role_off"></a></li>';
                         } else if (array.moduleId === 2) {
-                            div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/admin/admin_list.html" class="admin_off"></a></li>';
+                            div.innerHTML = div.innerHTML + '<li><a href="/toAdmin" class="admin_off"></a></li>';
                         }
                         else if (array.moduleId === 3) {
                             div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/fee/fee_list.html" class="fee_off"></a></li>';
@@ -84,23 +88,46 @@
             $("#tele_error").empty();
             $("#email_error").empty();
 
+            $("span.required").hide();
+
+            var nameVerify=/^[a-zA-Z0-9_-]{4,16}$/;
+            var teleVerify=/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/gi;
+            var emailVerify=/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
             var name = $("#name").val();
             if (name == ""){
                 $("#name_error").text("请输入姓名");
+                $("span.required").show();
                 return;
             }
+            if (!nameVerify.exec(name)){
+                $("#name_error").text("20长度以内的汉字、字母的组合");
+                $("span.required").show();
+                return;
+            }
+
 
             var telephone = $("#telephone").val();
             if (telephone == ""){
                 $("#tele_error").text("请输入电话");
+
+                return;
+            }
+            if (!teleVerify.exec(telephone)){
+                $("#tele_error").text("电话号码格式：手机或固话");
                 return;
             }
 
             var email = $("#email").val();
             if (email == ""){
-                $("#email_error").text("请输入验证码");
+                $("#email_error").text("请输入邮箱");
                 return;
             }
+
+            if (!emailVerify.exec(email)){
+                $("#email_error").text("50长度以内，符合 email 格式");
+                return;
+            }
+
 
             $.ajax({
 
@@ -120,6 +147,8 @@
 
             })
         }
+
+
         //回车时，默认是保存
         function on_return() {
             if (window.event.keyCode == 13) {
@@ -159,25 +188,26 @@
         <div class="text_info clearfix"><span>姓名：</span></div>
         <div class="input_info">
             <input id="name" type="text" value=""/>
-            <span class="required">*</span>
-            <div class="validate_msg_long error_msg" id="name_error">20长度以内的汉字、字母的组合</div>
+            <span class="required" id="error*">*</span>
+            <div class="validate_msg_long error_msg" id="name_error"></div>
         </div>
-        <div class="text_info clearfix"><span>电话：</span></div>
+        <div class="text_info clearfix" ><span>电话：</span></div>
         <div class="input_info">
             <input id="telephone" type="text" class="width200" value=""/>
-            <div class="validate_msg_medium" id="tele_error">电话号码格式：手机或固话</div>
+            <div class="validate_msg_medium" id="tele_error"></div>
         </div>
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
             <input id="email" type="text" class="width200" value=""/>
-            <div class="validate_msg_medium" id="email_error">50长度以内，符合 email 格式</div>
+            <div class="validate_msg_medium" id="email_error"></div>
         </div>
         <div class="text_info clearfix"><span>创建时间：</span></div>
         <div class="input_info"><input id="enrolldate" type="text" readonly="readonly" class="readonly" value=""/>
         </div>
         <div class="button_info clearfix">
             <input id="update" type="button" value="保存" class="btn_save" onclick="saveInfo();"/>
-            <input type="button" value="取消" class="btn_save"/>
+            <input type="button" value="取消" class="btn_save" onclick="location.href='/user_info'"/>
+
         </div>
     </form>
 </div>
