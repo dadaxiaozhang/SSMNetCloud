@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lanou.mapper.CostMapper">
-  <resultMap id="BaseResultMap" type="com.lanou.bean.Cost">
+<mapper namespace="com.lanou.cost.mapper.CostMapper">
+  <resultMap id="CostMap" type="com.lanou.cost.bean.Cost">
     <result column="cost_id" jdbcType="INTEGER" property="costId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="base_duration" jdbcType="INTEGER" property="baseDuration" />
@@ -13,17 +13,17 @@
     <result column="startime" jdbcType="TIMESTAMP" property="startime" />
     <result column="cost_type" jdbcType="CHAR" property="costType" />
   </resultMap>
-  <insert id="insert" parameterType="com.lanou.bean.Cost">
-    insert into cost (cost_id, name, base_duration, 
+  <insert id="insert" parameterType="com.lanou.cost.bean.Cost">
+    insert into cost ( name, base_duration,
       base_cost, unit_cost, status, 
       descr, creatime, startime, 
       cost_type)
-    values (#{costId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{baseDuration,jdbcType=INTEGER}, 
+    values ( #{name,jdbcType=VARCHAR}, #{baseDuration,jdbcType=INTEGER},
       #{baseCost,jdbcType=INTEGER}, #{unitCost,jdbcType=INTEGER}, #{status,jdbcType=CHAR}, 
       #{descr,jdbcType=VARCHAR}, #{creatime,jdbcType=TIMESTAMP}, #{startime,jdbcType=TIMESTAMP}, 
       #{costType,jdbcType=CHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.lanou.bean.Cost">
+  <insert id="insertSelective" parameterType="com.lanou.cost.bean.Cost">
     insert into cost
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="costId != null">
@@ -90,4 +90,7 @@
       </if>
     </trim>
   </insert>
+  <select id="getAllCost" resultMap="CostMap">
+    SELECT * FROM cost
+  </select>
 </mapper>

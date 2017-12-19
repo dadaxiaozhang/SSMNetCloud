@@ -28,5 +28,8 @@
       </if>
     </trim>
   </insert>
+    <delete id="delAR">
+      DELETE FROM admin_role WHERE admin_id=#{adminId}
+    </delete>
 
 </mapper>

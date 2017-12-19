@@ -1,4 +1,4 @@
-package com.lanou.bean;
+package com.lanou.cost.bean;
 
 
 import java.sql.Date;

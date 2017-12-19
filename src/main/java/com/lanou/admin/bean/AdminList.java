@@ -1,6 +1,7 @@
 package com.lanou.admin.bean;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
  * Created by dllo on 17/12/15.
@@ -23,8 +24,12 @@ public class AdminList {
     private Date enrolldate;
 
     private Integer role_id;
+
+    private String roleName;
     private String role_name;
     private String access_info;
+
+    private List<Integer> roleList;
 
     public AdminList() {
     }
@@ -123,5 +128,21 @@ public class AdminList {
 
     public void setAccess_info(String access_info) {
         this.access_info = access_info;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public List<Integer> getRoleList() {
+        return roleList;
+    }
+
+    public void setRoleList(List<Integer> roleList) {
+        this.roleList = roleList;
     }
 }

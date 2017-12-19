@@ -7,6 +7,7 @@ import com.lanou.bean.ModuleInfo;
 import com.lanou.login.mapper.AdminInfoMapper;
 import com.lanou.login.service.AdminInfoService;
 import com.lanou.mapper.AdminRoleMapper;
+import com.lanou.role.bean.RoleInfo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,6 +55,31 @@ public class AdminInfoServiceImpl implements AdminInfoService {
     @Override
     public int insert(AdminRole record) {
         return adminRoleMapper.insert(record);
+    }
+
+    @Override
+    public int delAdmin(AdminInfo adminInfo) {
+        return adminInfoMapper.delAdmin(adminInfo);
+    }
+
+    @Override
+    public int delAR(AdminRole adminRole) {
+        return adminRoleMapper.delAR(adminRole);
+    }
+
+    @Override
+    public void update(AdminInfo adminInfo) {
+        adminInfoMapper.update(adminInfo);
+    }
+
+    @Override
+    public int resetPwd(int adminId) {
+        return adminInfoMapper.resetPwd(adminId);
+    }
+
+    @Override
+    public List<AdminList> getAdminByCondition(RoleInfo roleInfo) {
+        return adminInfoMapper.getAdminByCondition(roleInfo);
     }
 
 

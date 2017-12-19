@@ -59,5 +59,10 @@ public class RoleServiceImpl implements RoleService {
         roleInfoMapper.updateRole(roleInfo);
     }
 
+    @Override
+    public List<RoleInfo> getAllRole() {
+        return roleInfoMapper.getAllRole();
+    }
+
 
 }

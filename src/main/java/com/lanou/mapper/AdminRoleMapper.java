@@ -7,4 +7,5 @@ public interface AdminRoleMapper {
 
     int insertSelective(AdminRole record);
 
+    int delAR(AdminRole adminRole);
 }

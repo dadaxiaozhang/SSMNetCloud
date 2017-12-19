@@ -7,6 +7,8 @@ public class RoleInfo {
 
     private String name;
 
+    private Integer moduleId;
+
     private List<ModuleId> moduleIdList;
 
     public RoleInfo() {
@@ -17,6 +19,8 @@ public class RoleInfo {
         return "RoleInfo{" +
                 "roleId=" + roleId +
                 ", name='" + name + '\'' +
+                ", moduleId=" + moduleId +
+                ", moduleIdList=" + moduleIdList +
                 '}';
     }
 
@@ -42,5 +46,13 @@ public class RoleInfo {
 
     public void setModuleIdList(List<ModuleId> moduleIdList) {
         this.moduleIdList = moduleIdList;
+    }
+
+    public Integer getModuleId() {
+        return moduleId;
+    }
+
+    public void setModuleId(Integer moduleId) {
+        this.moduleId = moduleId;
     }
 }

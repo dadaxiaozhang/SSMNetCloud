@@ -89,6 +89,14 @@
         SET password = #{password}
         WHERE admin_id = #{admin_id}
     </update>
+    <update id="update">
+        UPDATE admin_info SET name=#{name},telephone=#{telephone},email=#{email}
+        where admin_id=#{admin_id}
+    </update>
+
+    <delete id="delAdmin">
+        DELETE FROM admin_info WHERE admin_id=#{admin_id}
+    </delete>
 
     <select id="checkUser" resultMap="adminMap">
         SELECT *
@@ -121,9 +129,29 @@
               mi.module_id = rm.module_id
         GROUP BY ai.admin_id
     </select>
+
+    <select id="getAdminByCondition" resultMap="adminList">
+        SELECT
+            ai.*,
+            group_concat( rl.name SEPARATOR ',') role_name
+        FROM role_info rl, role_module rm, module_info mi, admin_info ai, admin_role ar
+        WHERE ai.admin_id = ar.admin_id AND
+              ar.role_id = rm.role_id AND rm.role_id = rl.role_id AND rl.role_id = rm.role_id AND
+              mi.module_id = rm.module_id
+        <if test="moduleId!=0">
+            AND mi.module_id = #{moduleId}
+        </if>
+        <if test="name!=null and name!='' ">
+            AND rl.name like #{name}
+        </if>
+        GROUP BY ai.admin_id
+    </select>
+
     <select id="getAdminCodebyid" resultType="java.lang.Integer">
         SELECT admin_id FROM admin_info WHERE admin_code=#{admin_code}
     </select>
 
-
+    <update id="resetPwd">
+        UPDATE admin_info SET password = "000000" WHERE admin_id=#{value}
+    </update>
 </mapper>

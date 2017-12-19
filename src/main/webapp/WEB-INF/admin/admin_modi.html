@@ -1,99 +1,270 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title></title>
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css" />
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css" />
-        <script language="javascript" type="text/javascript">
-            //保存成功的提示消息
-            function showResult() {
-                showResultDiv(true);
-                window.setTimeout("showResultDiv(false);", 3000);
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
+    <script type="text/javascript" src="/js/jquery-3.2.1.js"></script>
+    <script type="text/javascript">
+
+        $(function () {
+            $("span.required").hide();
+
+            $.ajax({
+
+                url: "/getRole",
+                success: function (result) {
+                    var div = document.getElementById("menu_role");
+
+                    for (var i = 0; i < result.data.length; i++) {
+                        div.innerHTML = div.innerHTML + '<li><input name="inp0" id="' + result.data[i].role_id + '" type="checkbox" value="' + result.data[i].role_id + '"/>' + result.data[i].role_name + '</li>'
+                    }
+                }
+
+            });
+
+            $.ajax({
+
+                url: "/getAdminInfo",
+                success: function (resultData) {
+                    console.log(resultData);
+
+                    var names = document.getElementsByName("inp0");
+                    console.log(names);
+                    var roleId = [];
+                    for (var i = 0; i < names.length; i++) {
+                        var id = parseInt(names[i].value); //这个值就是你要的
+                        roleId.push(id);
+                    }
+                    console.log(roleId);
+
+                    $("#name").val(resultData.data.name);
+                    $("#admin_code").val(resultData.data.admin_code);
+                    $("#telephone").val(resultData.data.telephone);
+                    $("#email").val(resultData.data.email);
+
+
+                    for (var j = 0; j < roleId.length; j++) {
+                        if (resultData.data.roleList[j] == roleId[j]) {
+                            $("input[name=inp0]:eq("+j+")").attr("checked", 'checked');
+                        }
+                    }
+
+
+                }
+
+            });
+
+            $.ajax({
+                url: "/getAccess",
+                success: function (result) {
+
+                    var div = document.getElementById("menu");
+                    div.innerHTML = '<li><a href="/index" onclick="window.location.reload()" class="index_on"></a></li>';
+                    var access = "";
+                    for (var i = 0; i < result.data.length; i++) {
+
+                        var array = result.data[i];
+                        if (i == 0) {
+                            access = access + result.data[i].name
+                        } else {
+                            access = access + "," + result.data[i].name
+                        }
+
+                        if (array.moduleId === 1) {
+                            div.innerHTML = div.innerHTML + '<li><a href="/role_info" class="role_off"></a></li>';
+                        } else if (array.moduleId === 2) {
+                            div.innerHTML = div.innerHTML + '<li><a href="/toAdmin" class="admin_off"></a></li>';
+                        }
+                        else if (array.moduleId === 3) {
+                            div.innerHTML = div.innerHTML + ' <li><a href="/toCost" class="fee_off"></a></li>';
+                        } else if (array.moduleId === 4) {
+                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/account/account_list.html" class="account_off"></a></li>';
+                        } else if (array.moduleId === 5) {
+                            div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/service/service_list.html" class="service_off"></a></li>';
+                        } else if (array.moduleId === 6) {
+                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/bill/bill_list.html" class="bill_off"></a></li>';
+                        } else if (array.moduleId === 7) {
+                            div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/report/report_list.html" class="report_off"></a></li>';
+                        }
+                    }
+                    div.innerHTML = div.innerHTML + ' <li><a href="/user_info" class="information_off"></a></li>' + ' <li><a href="/updatePwd" class="password_off"></a></li>';
+
+                    $("#access").val(access);
+                }
+            });
+        });
+
+        function updateadmin() {
+
+            $("#name_error").empty();
+            $("#telephone_error").empty();
+            $("#email_error").empty();
+            $("#role_error").empty();
+            $("span.required").hide();
+
+            var name = $("#name").val();
+            var telephone=$("#telephone").val();
+            var email=$("#email").val();
+
+            var nameVerify=/^[a-zA-Z0-9_-]{4,16}$/;
+            var teleVerify=/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/gi;
+            var emailVerify=/^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+
+            var n = [];
+            var roleId = $('input[name=inp0]');
+            for (var i = 0; i < roleId.length; i++) {
+                if (roleId[i].checked) {
+                    console.log(roleId[i]);
+                    n.push(roleId[i].value);
+                }
             }
-            function showResultDiv(flag) {
-                var divResult = document.getElementById("save_result_info");
-                if (flag)
-                    divResult.style.display = "block";
-                else
-                    divResult.style.display = "none";
+
+            if (name == "") {
+                $("#name_error").text("请输入管理员姓名");
+                $("span.required").show();
+                return;
             }
-        </script>
-    </head>
-    <body>
-        <!--Logo区域开始-->
-        <div id="header">
-            <img src="../images/logo.png" alt="logo" class="left"/>
-            <a href="#">[退出]</a>            
+
+            if (!nameVerify.exec(name)){
+                $("#name_error").text("20长度以内的汉字、字母的组合");
+                $("span.required").show();
+                return;
+            }
+
+
+
+            if (telephone == "") {
+                $("#telephone_error").text("请输入电话号码");
+                $("span.required").show();
+                return;
+            }
+
+            if (!teleVerify.exec(telephone)){
+                $("#telephone_error").text("正确的电话号码格式：手机或固话");
+                $("span.required").show();
+                return;
+            }
+
+            if (email == "") {
+                $("#telephone_error").text("请输入邮箱");
+                $("span.required").show();
+                return;
+            }
+
+            if (!emailVerify.exec(email)){
+                $("#telephone_error").text("50长度以内，正确的 email 格式");
+                $("span.required").show();
+                return;
+            }
+
+
+
+            if (n.length == 0) {
+
+                $("#role_error").text("至少选择一个");
+                $("span.required").show();
+                return;
+            }
+
+            $.ajax({
+
+                type: "post",
+                url: "/updateAdmin",
+                traditional:true,
+                data: {
+                    name: name,
+                    telephone: telephone,
+                    email: email,
+                    roleId: n
+                },
+
+                success: function (result) {
+
+                    if (result.errorCode==200){
+                        showResult();
+                    }
+                }
+
+            })
+
+        }
+        //保存成功的提示消息
+        function showResult() {
+            showResultDiv(true);
+            window.setTimeout("showResultDiv(false);", 3000);
+        }
+        function showResultDiv(flag) {
+            var divResult = document.getElementById("save_result_info");
+            if (flag)
+                divResult.style.display = "block";
+            else
+                divResult.style.display = "none";
+        }
+
+    </script>
+</head>
+<body>
+<!--Logo区域开始-->
+<div id="header">
+    <img src="../images/logo.png" alt="logo" class="left"/>
+    <a href="/exit">[退出]</a>
+</div>
+<!--Logo区域结束-->
+<!--导航区域开始-->
+<div id="navi">
+    <ul id="menu">
+
+    </ul>
+</div>
+<!--导航区域结束-->
+<!--主要区域开始-->
+<div id="main">
+    <div id="save_result_info" class="save_success">保存成功！</div>
+    <form action="" method="" class="main_form">
+        <div class="text_info clearfix"><span>姓名：</span></div>
+        <div class="input_info">
+            <input type="text" id="name" value=""/>
+            <span class="required">*</span>
+            <div class="validate_msg_long error_msg" id="name_error"></div>
         </div>
-        <!--Logo区域结束-->
-        <!--导航区域开始-->
-        <div id="navi">
-            <ul id="menu">
-                <li><a href="../index.html" class="index_off"></a></li>
-                <li><a href="../role/role_list.html" class="role_off"></a></li>
-                <li><a href="../admin/admin_list.html" class="admin_on"></a></li>
-                <li><a href="../fee/fee_list.html" class="fee_off"></a></li>
-                <li><a href="../account/account_list.html" class="account_off"></a></li>
-                <li><a href="../service/service_list.html" class="service_off"></a></li>
-                <li><a href="../bill/bill_list.html" class="bill_off"></a></li>
-                <li><a href="../report/report_list.html" class="report_off"></a></li>
-                <li><a href="../user/user_info.html" class="information_off"></a></li>
-                <li><a href="../user/user_modi_pwd.html" class="password_off"></a></li>
-            </ul>
+        <div class="text_info clearfix"><span>管理员账号：</span></div>
+        <div class="input_info"><input type="text" id="admin_code" readonly="readonly" class="readonly" value=""/></div>
+        <div class="text_info clearfix"><span>电话：</span></div>
+        <div class="input_info">
+            <input type="text" id="telephone" value=""/>
+            <span class="required">*</span>
+            <div class="validate_msg_long error_msg" id="telephone_error"></div>
         </div>
-        <!--导航区域结束-->
-        <!--主要区域开始-->
-        <div id="main">            
-            <div id="save_result_info" class="save_success">保存成功！</div>
-            <form action="" method="" class="main_form">
-                    <div class="text_info clearfix"><span>姓名：</span></div>
-                    <div class="input_info">
-                        <input type="text" value="张三" />
-                        <span class="required">*</span>
-                        <div class="validate_msg_long error_msg">20长度以内的汉字、字母、数字的组合</div>
-                    </div>
-                    <div class="text_info clearfix"><span>管理员账号：</span></div>
-                    <div class="input_info"><input type="text" readonly="readonly" class="readonly" value="admin1"  /></div>
-                    <div class="text_info clearfix"><span>电话：</span></div>
-                    <div class="input_info">
-                        <input type="text" value="13111111111"  />
-                        <span class="required">*</span>
-                        <div class="validate_msg_long error_msg">正确的电话号码格式：手机或固话</div>
-                    </div>
-                    <div class="text_info clearfix"><span>Email：</span></div>
-                    <div class="input_info">
-                        <input type="text" class="width200" value="aa@aa.com"/>
-                        <span class="required">*</span>
-                        <div class="validate_msg_medium error_msg">50长度以内，正确的 email 格式</div>
-                    </div>
-                    <div class="text_info clearfix"><span>角色：</span></div>
-                    <div class="input_info_high">
-                        <div class="input_info_scroll">
-                            <ul>
-                                <li><input type="checkbox" />超级管理员</li>
-                                <li><input type="checkbox" />账务账号管理员</li>
-                                <li><input type="checkbox" />业务账号管理员</li>
-                                <li><input type="checkbox" />账务账号管理员</li>
-                                <li><input type="checkbox" />业务账号管理员</li>
-                                <li><input type="checkbox" />账务账号管理员</li>
-                                <li><input type="checkbox" />业务账号管理员</li>
-                            </ul>
-                        </div>
-                        <span class="required">*</span>
-                        <div class="validate_msg_tiny error_msg">至少选择一个</div>
-                    </div>
-                    <div class="button_info clearfix">
-                        <input type="button" value="保存" class="btn_save" onclick="showResult();" />
-                        <input type="button" value="取消" class="btn_save" />
-                    </div>
-                </form>  
+        <div class="text_info clearfix"><span>Email：</span></div>
+        <div class="input_info">
+            <input type="text" id="email" class="width200" value=""/>
+            <span class="required">*</span>
+            <div class="validate_msg_medium error_msg" id="email_error"></div>
         </div>
-        <!--主要区域结束-->
-        <div id="footer">
-            <span>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</span>
-            <br />
-            <span>版权所有(C)云科技有限公司 </span>
+        <div class="text_info clearfix"><span>角色：</span></div>
+        <div class="input_info_high">
+            <div class="input_info_scroll">
+                <ul id="menu_role">
+
+                </ul>
+            </div>
+            <span class="required">*</span>
+            <div class="validate_msg_tiny error_msg" id="role_error"></div>
         </div>
-    </body>
+        <div class="button_info clearfix">
+            <input type="button" value="保存" class="btn_save" onclick="updateadmin();"/>
+            <input type="button" value="取消" class="btn_save" onclick="location.href='/toUpdateAdmin'"/>
+        </div>
+    </form>
+</div>
+<!--主要区域结束-->
+<div id="footer">
+    <span>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</span>
+    <br/>
+    <span>版权所有(C)云科技有限公司 </span>
+</div>
+</body>
 </html>

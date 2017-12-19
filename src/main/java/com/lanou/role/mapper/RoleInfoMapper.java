@@ -19,4 +19,5 @@ public interface RoleInfoMapper {
 
     void updateRole(RoleInfo roleInfo);
 
+    List<RoleInfo> getAllRole();
 }

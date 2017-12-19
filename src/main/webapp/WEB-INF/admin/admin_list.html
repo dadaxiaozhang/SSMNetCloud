@@ -23,9 +23,9 @@
                         var name = result.data[i].role_name;
                         var str=name.split(',');
 
-                        div.innerHTML = div.innerHTML + '<tr><td><input type="checkbox" /></td><td>' + result.data[i].admin_id + '</td><td>'+result.data[i].name+'</td><td>' + result.data[i].admin_code + '</td><td>' + result.data[i].telephone + '</td><td>' + result.data[i].email + '</td><td>' + result.data[i].enrolldate + '</td><td><a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">'+str[0]+'</a><div class="detail_info">' + name + '</div></td>' +
-                                "<td><input type='button' value='修改' class='btn_modify'/>" +
-                                "<input type='button' value='删除' class='btn_delete'/></td></tr>";
+                        div.innerHTML = div.innerHTML + '<tr><td><input type="checkbox" value="'+result.data[i].admin_id+'"/></td><td>' + result.data[i].admin_id + '</td><td>'+result.data[i].name+'</td><td>' + result.data[i].admin_code + '</td><td>' + result.data[i].telephone + '</td><td>' + result.data[i].email + '</td><td>' + result.data[i].enrolldate + '</td><td><a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">'+str[0]+'</a><div class="detail_info">' + name + '</div></td>' +
+                                "<td><input type='button' value='修改' class='btn_modify' onclick='toupdateAdmin(\""+result.data[i].admin_id+"\",\""+result.data[i].name+"\",\""+result.data[i].admin_code+"\",\""+result.data[i].telephone+"\",\""+result.data[i].email+"\",\""+result.data[i].role_name+"\")'/>" +
+                                "<input type='button' value='删除' class='btn_delete' onclick='delAdmin(\""+result.data[i].admin_id+"\")'/></td></tr>";
 
                     }
 
@@ -57,7 +57,7 @@
                             div.innerHTML = div.innerHTML + '<li><a href="/toAdmin" class="admin_off"></a></li>';
                         }
                         else if (array.moduleId === 3) {
-                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/fee/fee_list.html" class="fee_off"></a></li>';
+                            div.innerHTML = div.innerHTML + ' <li><a href="/toCost" class="fee_off"></a></li>';
                         } else if (array.moduleId === 4) {
                             div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/account/account_list.html" class="account_off"></a></li>';
                         } else if (array.moduleId === 5) {
@@ -74,6 +74,65 @@
                 }
             });
         });
+
+        function toupdateAdmin(admin_id,admin_name,admin_code,admin_tel,admin_email,role_name) {
+            $.ajax({
+                url:"/jumpToAdmin",
+                data:{
+                    admin_id:admin_id,
+                    name:encodeURI(admin_name),
+                    admin_code:encodeURI(admin_code),
+                    telephone:admin_tel,
+                    email:admin_email,
+                    role_name:encodeURI(role_name)
+                },
+
+                success:function (result) {
+                    if (result.errorCode==200){
+                        location.href="/toUpdateAdmin";
+                    }
+
+                }
+
+            })
+        }
+
+        function delAdmin(admin_id) {
+
+            var r = window.confirm("确定要删除此管理员吗？");
+
+            if (r){
+
+                $.ajax({
+
+                    url:"/deleteAdmin",
+                    data:{
+
+                        admin_id:admin_id,
+                    },
+
+                    success:function (result) {
+
+                        if(result.errorCode==200){
+                            $("#datalist tbody").html("");
+
+                            for (var i = 0; i < result.data.length; i++) {
+                                var div = document.getElementById("datalist");
+                                var name = result.data[i].role_name;
+                                var str=name.split(',');
+
+                                div.innerHTML = div.innerHTML + '<tr><td><input type="checkbox" value="'+result.data[i].admin_id+'"/></td><td>' + result.data[i].admin_id + '</td><td>'+result.data[i].name+'</td><td>' + result.data[i].admin_code + '</td><td>' + result.data[i].telephone + '</td><td>' + result.data[i].email + '</td><td>' + result.data[i].enrolldate + '</td><td><a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">'+str[0]+'</a><div class="detail_info">' + name + '</div></td>' +
+                                        "<td><input type='button' value='修改' class='btn_modify' onclick='toupdateAdmin(\""+result.data[i].admin_id+"\",\""+result.data[i].name+"\",\""+result.data[i].admin_code+"\",\""+result.data[i].telephone+"\",\""+result.data[i].email+"\",\""+result.data[i].role_name+"\")'/>" +
+                                        "<input type='button' value='删除' class='btn_delete' onclick='delAdmin(\""+result.data[i].admin_id+"\")'/></td></tr>";
+
+                            }
+
+                            document.getElementById("operate_result_info").style.display = "block";
+                        }
+                    }
+        });
+            }
+        }
         //显示角色详细信息
         function showDetail(flag, a) {
             var detailDiv = a.parentNode.getElementsByTagName("div")[0];
@@ -85,14 +144,29 @@
         }
         //重置密码
         function resetPwd() {
-            alert("请至少选择一条数据！");
-            //document.getElementById("operate_result_info").style.display = "block";
+
+            var strId = "";
+            $.each($('input:checkbox'), function () {
+                if (this.checked) {
+                    strId = strId + $(this).val() + "-";
+                }
+            });
+            console.log(strId);
+            $.ajax({
+                url: "/resetPwd",
+                data: {"strId": strId},
+                success: function (result) {
+                    console.log(result);
+                    if (result.msg == "重置成功") {
+                        alert("重置成功!")
+                    } else {
+                        resetPwd();
+                    }
+                }
+            })
+
         }
-        //删除
-        function deleteAdmin() {
-            var r = window.confirm("确定要删除此管理员吗？");
-            document.getElementById("operate_result_info").style.display = "block";
-        }
+
         //全选
         function selectAdmins(inputObj) {
             var inputArray = document.getElementById("datalist").getElementsByTagName("input");
@@ -102,6 +176,38 @@
                 }
             }
         }
+
+        function findByCondition() {
+            var moduleId = $("#selModules").val();
+            var roleName = $("#roleName").val();
+            console.log(moduleId);
+            console.log(roleName);
+            $.ajax({
+                url:"/findAmdinByCondition",
+                data: {
+                    "moduleId":moduleId,
+                    "name":encodeURI(roleName)
+
+                },
+                success:function (result) {
+
+                    $("#datalist tbody").html("");
+
+                    for (var i = 0; i < result.data.length; i++) {
+                        var div = document.getElementById("datalist");
+                        var name = result.data[i].role_name;
+                        var str=name.split(',');
+
+                        div.innerHTML = div.innerHTML + '<tr><td><input type="checkbox" value="'+result.data[i].admin_id+'"/></td><td>' + result.data[i].admin_id + '</td><td>'+result.data[i].name+'</td><td>' + result.data[i].admin_code + '</td><td>' + result.data[i].telephone + '</td><td>' + result.data[i].email + '</td><td>' + result.data[i].enrolldate + '</td><td><a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">'+str[0]+'</a><div class="detail_info">' + name + '</div></td>' +
+                                "<td><input type='button' value='修改' class='btn_modify' onclick='toupdateAdmin(\""+result.data[i].admin_id+"\",\""+result.data[i].name+"\",\""+result.data[i].admin_code+"\",\""+result.data[i].telephone+"\",\""+result.data[i].email+"\",\""+result.data[i].role_name+"\")'/>" +
+                                "<input type='button' value='删除' class='btn_delete' onclick='delAdmin(\""+result.data[i].admin_id+"\")'/></td></tr>";
+
+                    }
+
+                }
+            })
+        }
+
     </script>
 </head>
 <body>
@@ -126,29 +232,30 @@
             <div>
                 模块：
                 <select id="selModules" class="select_search">
-                    <option>全部</option>
-                    <option>角色管理</option>
-                    <option>管理员管理</option>
-                    <option>资费管理</option>
-                    <option>账务账号</option>
-                    <option>业务账号</option>
-                    <option>账单管理</option>
-                    <option>报表</option>
+                    <option value="0">全部</option>
+                    <option value="1">角色管理</option>
+                    <option value="2">管理员管理</option>
+                    <option value="3">资费管理</option>
+                    <option value="4">账务账号</option>
+                    <option value="5">业务账号</option>
+                    <option value="6">账单管理</option>
+                    <option value="7">报表</option>
                 </select>
             </div>
-            <div>角色：<input type="text" value="" class="text_search width200"/></div>
-            <div><input type="button" value="搜索" class="btn_search"/></div>
+            <div>角色：<input id="roleName" type="text" value="" class="text_search width200"/></div>
+            <div><input type="button" value="搜索" class="btn_search" onclick="findByCondition();"/></div>
             <input type="button" value="密码重置" class="btn_add" onclick="resetPwd();"/>
             <input type="button" value="增加" class="btn_add" onclick="location.href='/toAddAdmin';"/>
         </div>
         <!--删除和密码重置的操作提示-->
         <div id="operate_result_info" class="operate_fail">
             <img src="../images/close.png" onclick="this.parentNode.style.display='none';"/>
-            <span>删除失败！数据并发错误。</span><!--密码重置失败！数据并发错误。-->
+            <span>删除成功。</span><!--密码重置失败！数据并发错误。-->
         </div>
         <!--数据区域：用表格展示数据-->
         <div id="data">
             <table id="datalist">
+                <thead>
                 <tr>
                     <th class="th_select_all">
                         <input type="checkbox" onclick="selectAdmins(this);"/>
@@ -163,6 +270,10 @@
                     <th class="width100">拥有角色</th>
                     <th></th>
                 </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
 
 
             </table>

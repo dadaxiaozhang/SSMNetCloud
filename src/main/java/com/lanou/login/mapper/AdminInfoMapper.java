@@ -3,6 +3,7 @@ package com.lanou.login.mapper;
 import com.lanou.admin.bean.AdminList;
 import com.lanou.login.bean.AdminInfo;
 import com.lanou.bean.ModuleInfo;
+import com.lanou.role.bean.RoleInfo;
 
 import java.util.List;
 
@@ -27,4 +28,14 @@ public interface AdminInfoMapper {
     List<AdminList> getAdmin();
 //    根据账户名获取管理员id
     Integer getAdminCodebyid(String admin_code);
+
+//    根据管理员id删除对应信息
+    int delAdmin(AdminInfo adminInfo);
+
+//    修改管理员信息
+    void update(AdminInfo adminInfo);
+//   重置密码
+    int resetPwd(int adminId);
+//    高级查询
+    List<AdminList> getAdminByCondition(RoleInfo roleInfo);
 }

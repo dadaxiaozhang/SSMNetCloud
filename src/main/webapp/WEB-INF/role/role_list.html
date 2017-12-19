@@ -54,7 +54,7 @@
                             div.innerHTML = div.innerHTML + '<li><a href="/toAdmin" class="admin_off"></a></li>';
                         }
                         else if (array.moduleId === 3) {
-                            div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/fee/fee_list.html" class="fee_off"></a></li>';
+                            div.innerHTML = div.innerHTML + ' <li><a href="/toCost" class="fee_off"></a></li>';
                         } else if (array.moduleId === 4) {
                             div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/account/account_list.html" class="account_off"></a></li>';
                         } else if (array.moduleId === 5) {
@@ -88,9 +88,21 @@
                     success:function (result) {
 
                         if(result.errorCode==200){
+                            $("#datalist tbody").html("");
 
+                            for (var i = 0; i < result.data.length; i++) {
+                                var div = document.getElementById("datalist");
+                                var name=result.data[i].role_name;
+                                var str=result.data[i].access_info;
+                                div.innerHTML = div.innerHTML + '<tr><td>' + result.data[i].role_id + '</td><td>' + result.data[i].role_name + '</td><td>' + result.data[i].access_info + '</td>' +
+                                        "<td><input type='button' value='修改' class='btn_modify' onclick='toupdateRole(\""+result.data[i].role_id+"\",\""+name+"\",\""+str+"\")'/>" +
+                                        "<input type='button' value='删除' class='btn_delete' onclick='delRole(\""+result.data[i].role_id+"\")'/></td></tr>";
+
+                            }
                             document.getElementById("operate_result_info").style.display = "block";
+
                         }
+
                     }
 
                 })
@@ -154,12 +166,15 @@
         <!--数据区域：用表格展示数据-->
         <div id="data">
             <table id="datalist">
-                <tr>
+                <thead><tr>
                     <th>角色 ID</th>
                     <th>角色名称</th>
                     <th class="width600">拥有的权限</th>
                     <th class="td_modi"></th>
-                </tr>
+                </tr></thead>
+                <tbody>
+
+                </tbody>
 
             </table>
         </div>

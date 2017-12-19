@@ -140,8 +140,10 @@ public class RoleController {
         AjaxResult ajaxResult = new AjaxResult();
         int deleteRmNum = roleService.deleteRm(roleinfo.getRoleId());
         int deleteRlNum = roleService.deleteRole(roleinfo);
+        List<RoleList> role = roleService.getRole();
         if (deleteRlNum == 1 && deleteRmNum != 0) {
             ajaxResult.setErrorCode(200);
+            ajaxResult.setData(role);
         }
         return ajaxResult;
     }

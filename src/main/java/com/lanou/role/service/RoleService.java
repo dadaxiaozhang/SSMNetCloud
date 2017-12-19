@@ -28,5 +28,5 @@ public interface RoleService {
 
     void updateRole(RoleInfo roleInfo);
 
-
+    List<RoleInfo> getAllRole();
 }

@@ -4,6 +4,7 @@ import com.lanou.admin.bean.AdminList;
 import com.lanou.bean.AdminRole;
 import com.lanou.login.bean.AdminInfo;
 import com.lanou.bean.ModuleInfo;
+import com.lanou.role.bean.RoleInfo;
 
 import java.util.List;
 
@@ -25,4 +26,13 @@ public interface AdminInfoService {
 
     int insert(AdminRole record);
 
+    int delAdmin(AdminInfo adminInfo);
+
+    int delAR(AdminRole adminRole);
+
+    void update(AdminInfo adminInfo);
+
+    int resetPwd(int adminId);
+
+    List<AdminList> getAdminByCondition(RoleInfo roleInfo);
 }
