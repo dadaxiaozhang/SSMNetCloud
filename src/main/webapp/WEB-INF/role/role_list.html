@@ -22,9 +22,9 @@
                         var div = document.getElementById("datalist");
                         var name=result.data[i].role_name;
                         var str=result.data[i].access_info;
-                        div.innerHTML = div.innerHTML + '<tr><td>' + result.data[i].role_id + '</td><td>' + result.data[i].role_name + '</td><td>' + result.data[i].access_info + '</td>' +
+                        div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].role_id + '</td><td>' + result.data[i].role_name + '</td><td>' + result.data[i].access_info + '</td>' +
                                 "<td><input type='button' value='修改' class='btn_modify' onclick='toupdateRole(\""+result.data[i].role_id+"\",\""+name+"\",\""+str+"\")'/>" +
-                                "<input type='button' value='删除' class='btn_delete' onclick='delRole(\""+result.data[i].role_id+"\")'/></td></tr>";
+                                "<input type='button' value='删除' class='btn_delete' onclick='delRole(\""+result.data[i].role_id+"\","+i+")'/></td></tr></tbody>";
 
                     }
                 }
@@ -72,7 +72,7 @@
             });
         });
 
-        function delRole(role_id) {
+        function delRole(role_id,i) {
             var r=window.confirm("确定要删除此角色么？");
             var roleId=role_id;
             if (r){
@@ -88,17 +88,7 @@
                     success:function (result) {
 
                         if(result.errorCode==200){
-                            $("#datalist tbody").html("");
-
-                            for (var i = 0; i < result.data.length; i++) {
-                                var div = document.getElementById("datalist");
-                                var name=result.data[i].role_name;
-                                var str=result.data[i].access_info;
-                                div.innerHTML = div.innerHTML + '<tr><td>' + result.data[i].role_id + '</td><td>' + result.data[i].role_name + '</td><td>' + result.data[i].access_info + '</td>' +
-                                        "<td><input type='button' value='修改' class='btn_modify' onclick='toupdateRole(\""+result.data[i].role_id+"\",\""+name+"\",\""+str+"\")'/>" +
-                                        "<input type='button' value='删除' class='btn_delete' onclick='delRole(\""+result.data[i].role_id+"\")'/></td></tr>";
-
-                            }
+                            $(".tbody").eq(i).remove();
                             document.getElementById("operate_result_info").style.display = "block";
 
                         }
@@ -172,9 +162,7 @@
                     <th class="width600">拥有的权限</th>
                     <th class="td_modi"></th>
                 </tr></thead>
-                <tbody>
 
-                </tbody>
 
             </table>
         </div>

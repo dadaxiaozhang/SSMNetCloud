@@ -27,4 +27,9 @@ public class CostServiceImpl implements CostService {
     public List<Cost> getAllCost() {
         return costMapper.getAllCost();
     }
+
+    @Override
+    public int delCost(Cost cost) {
+        return costMapper.delCost(cost);
+    }
 }

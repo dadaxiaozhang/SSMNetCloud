@@ -23,9 +23,9 @@
                         var name = result.data[i].role_name;
                         var str=name.split(',');
 
-                        div.innerHTML = div.innerHTML + '<tr><td><input type="checkbox" value="'+result.data[i].admin_id+'"/></td><td>' + result.data[i].admin_id + '</td><td>'+result.data[i].name+'</td><td>' + result.data[i].admin_code + '</td><td>' + result.data[i].telephone + '</td><td>' + result.data[i].email + '</td><td>' + result.data[i].enrolldate + '</td><td><a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">'+str[0]+'</a><div class="detail_info">' + name + '</div></td>' +
+                        div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td><input type="checkbox" value="'+result.data[i].admin_id+'"/></td><td>' + result.data[i].admin_id + '</td><td>'+result.data[i].name+'</td><td>' + result.data[i].admin_code + '</td><td>' + result.data[i].telephone + '</td><td>' + result.data[i].email + '</td><td>' + result.data[i].enrolldate + '</td><td><a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">'+str[0]+'</a><div class="detail_info">' + name + '</div></td>' +
                                 "<td><input type='button' value='修改' class='btn_modify' onclick='toupdateAdmin(\""+result.data[i].admin_id+"\",\""+result.data[i].name+"\",\""+result.data[i].admin_code+"\",\""+result.data[i].telephone+"\",\""+result.data[i].email+"\",\""+result.data[i].role_name+"\")'/>" +
-                                "<input type='button' value='删除' class='btn_delete' onclick='delAdmin(\""+result.data[i].admin_id+"\")'/></td></tr>";
+                                "<input type='button' value='删除' class='btn_delete' onclick='delAdmin(\""+result.data[i].admin_id+"\","+i+")'/></td></tr></tbody>";
 
                     }
 
@@ -97,7 +97,7 @@
             })
         }
 
-        function delAdmin(admin_id) {
+        function delAdmin(admin_id,i) {
 
             var r = window.confirm("确定要删除此管理员吗？");
 
@@ -114,19 +114,7 @@
                     success:function (result) {
 
                         if(result.errorCode==200){
-                            $("#datalist tbody").html("");
-
-                            for (var i = 0; i < result.data.length; i++) {
-                                var div = document.getElementById("datalist");
-                                var name = result.data[i].role_name;
-                                var str=name.split(',');
-
-                                div.innerHTML = div.innerHTML + '<tr><td><input type="checkbox" value="'+result.data[i].admin_id+'"/></td><td>' + result.data[i].admin_id + '</td><td>'+result.data[i].name+'</td><td>' + result.data[i].admin_code + '</td><td>' + result.data[i].telephone + '</td><td>' + result.data[i].email + '</td><td>' + result.data[i].enrolldate + '</td><td><a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">'+str[0]+'</a><div class="detail_info">' + name + '</div></td>' +
-                                        "<td><input type='button' value='修改' class='btn_modify' onclick='toupdateAdmin(\""+result.data[i].admin_id+"\",\""+result.data[i].name+"\",\""+result.data[i].admin_code+"\",\""+result.data[i].telephone+"\",\""+result.data[i].email+"\",\""+result.data[i].role_name+"\")'/>" +
-                                        "<input type='button' value='删除' class='btn_delete' onclick='delAdmin(\""+result.data[i].admin_id+"\")'/></td></tr>";
-
-                            }
-
+                            $(".tbody").eq(i).remove();
                             document.getElementById("operate_result_info").style.display = "block";
                         }
                     }
@@ -271,9 +259,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody>
 
-                </tbody>
 
 
             </table>

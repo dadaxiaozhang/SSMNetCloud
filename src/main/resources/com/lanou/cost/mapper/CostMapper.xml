@@ -15,11 +15,11 @@
   </resultMap>
   <insert id="insert" parameterType="com.lanou.cost.bean.Cost">
     insert into cost ( name, base_duration,
-      base_cost, unit_cost, status, 
+      base_cost, unit_cost,
       descr, creatime, startime, 
       cost_type)
     values ( #{name,jdbcType=VARCHAR}, #{baseDuration,jdbcType=INTEGER},
-      #{baseCost,jdbcType=INTEGER}, #{unitCost,jdbcType=INTEGER}, #{status,jdbcType=CHAR}, 
+      #{baseCost,jdbcType=INTEGER}, #{unitCost,jdbcType=INTEGER},
       #{descr,jdbcType=VARCHAR}, #{creatime,jdbcType=TIMESTAMP}, #{startime,jdbcType=TIMESTAMP}, 
       #{costType,jdbcType=CHAR})
   </insert>
@@ -90,6 +90,9 @@
       </if>
     </trim>
   </insert>
+  <delete id="delCost">
+    DELETE FROM cost WHERE cost_id=#{costId}
+  </delete>
   <select id="getAllCost" resultMap="CostMap">
     SELECT * FROM cost
   </select>

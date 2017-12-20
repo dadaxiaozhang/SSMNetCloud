@@ -14,4 +14,5 @@ public interface CostService {
 
     List<Cost> getAllCost();
 
+    int delCost(Cost cost);
 }

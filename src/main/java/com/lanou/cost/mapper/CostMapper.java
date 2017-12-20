@@ -10,4 +10,6 @@ public interface CostMapper {
     int insertSelective(Cost record);
     
     List<Cost> getAllCost();
+
+    int delCost(Cost cost);
 }

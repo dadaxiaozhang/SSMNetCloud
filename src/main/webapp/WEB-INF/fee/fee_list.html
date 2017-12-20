@@ -47,11 +47,32 @@
 
                     console.log(result);
                     for (var i = 0; i < result.data.length; i++) {
+
+                        var name=result.data[i].name;
                         var div = document.getElementById("datalist");
+                        var creatime = toDate(result.data[i].creatime);
+                        var startime = toDate(result.data[i].startime);
+                        if (result.data[i].creatime == null) {
+                            creatime = result.data[i].creatime;
+                        }
+                        if (result.data[i].startime == null) {
+                            startime = "未开启";
+                        }
+                        if (result.data[i].status == "0") {
+                            var status = "暂停";
+                        } else {
+                            status = "开通";
+                        }
 
+                        if (status == "暂停") {
+                            div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="fee_detail.html">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td>' + startime +
+                                    '</td><td>' + status + '</td><td>' + '<input type="button" value="启用" class="btn_start" onclick="startFee();" /><input  type="button" value="修改" class="btn_modify" onclick="jumptoupdateFee(' + result.data[i].costId + ',' + name + ',' + result.data[i].costType + ',' + result.data[i].baseDuration + ',' + result.data[i].baseCost + ',' + result.data[i].unitCost + ',' + result.data[i].descr + ');" /><input type="button" value="删除" class="btn_delete" onclick="deleteFee(' + result.data[i].costId + ',' + i + ');" /> </td></tr></tbody>'
+                        }
 
-                        div.innerHTML = div.innerHTML + '<tr><td>' + result.data[i].costId + '</td><td><a href="fee_detail.html">' + result.data[i].name + '</a></td><td>'+result.data[i].baseDuration+'小时'+'</td><td>'+result.data[i].baseCost +'元'+'</td><td>'+result.data[i].unitCost+'元/小时'+'</td><td>'+result.data[i].creatime+'</td><td>'+result.data[i].startime+
-                                        '</td><td>'+result.data[i].status+'</td><td>'+'<input type="button" value="启用" class="btn_start" onclick="startFee();" /><input type="button" value="修改" class="btn_modify" /><input type="button" value="删除" class="btn_delete" onclick="deleteFee();" /> </td> </tr>'
+                        if (status == "开通") {
+                            div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="fee_detail.html">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td>' + startime +
+                                    '</td><td>' + status + '</td><td></td> </tr></tbody>'
+                        }
 
 
                     }
@@ -59,6 +80,18 @@
 
             })
         })
+        //        时间戳转化为标准时间
+        function toDate(date) {
+            var date = new Date(date);
+            Y = date.getFullYear() + '-';
+            M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+            D = date.getDate() + ' ';
+            h = date.getHours() + ':';
+            m = date.getMinutes() + ':';
+            s = date.getSeconds();
+            var dateTime = Y + M + D + h + m + s;
+            return dateTime;
+        }
         //排序按钮的点击事件
         function sort(btnObj) {
             if (btnObj.className == "sort_desc")
@@ -73,9 +106,53 @@
             document.getElementById("operate_result_info").style.display = "block";
         }
         //删除
-        function deleteFee() {
+        function deleteFee(costId, i) {
+
+            console.log($("#tbody"), i);
             var r = window.confirm("确定要删除此资费吗？");
-            document.getElementById("operate_result_info").style.display = "block";
+            if (r) {
+                $.ajax({
+                    url: "/delcost",
+                    data: {
+                        costId: costId
+                    },
+
+                    success: function (result) {
+
+                        if (result.errorCode == 200) {
+                            $(".tbody").eq(i).remove();
+                            document.getElementById("operate_result_info").style.display = "block";
+                        }
+                    }
+
+                });
+
+            }
+        }
+
+        function jumptoupdateFee(costId, costName, costType, baseTime, baseCost, unitCost, Descr) {
+
+
+            $.ajax({
+
+                url: "/jumptoFee",
+                data: {
+
+                    costId: costId,
+                    name: encodeURI(costName),
+                    costType: costType,
+                    baseDuration: baseTime,
+                    baseCost: baseCost,
+                    unitCost: unitCost,
+                    descr: encodeURI(Descr)
+                },
+
+                success: function (result) {
+                    if (result.errorCode == 200) {
+                        location.href = "/toUpdateFee";
+                    }
+                }
+            });
         }
     </script>
 </head>
@@ -83,7 +160,7 @@
 <!--Logo区域开始-->
 <div id="header">
     <img src="../images/logo.png" alt="logo" class="left"/>
-    <a href="#">[退出]</a>
+    <a href="/exit">[退出]</a>
 </div>
 <!--Logo区域结束-->
 <!--导航区域开始-->
@@ -127,7 +204,6 @@
                 </tr>
                 </thead>
 
-                <tbody></tbody>
 
             </table>
             <p>业务说明：<br/>

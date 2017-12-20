@@ -2,6 +2,7 @@ package com.lanou.cost.bean;
 
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Cost {
     private Integer costId;
@@ -18,11 +19,27 @@ public class Cost {
 
     private String descr;
 
-    private Date creatime;
+    private Timestamp creatime;
 
-    private Date startime;
+    private Timestamp startime;
 
     private String costType;
+
+    @Override
+    public String toString() {
+        return "Cost{" +
+                "costId=" + costId +
+                ", name='" + name + '\'' +
+                ", baseDuration=" + baseDuration +
+                ", baseCost=" + baseCost +
+                ", unitCost=" + unitCost +
+                ", status='" + status + '\'' +
+                ", descr='" + descr + '\'' +
+                ", creatime=" + creatime +
+                ", startime=" + startime +
+                ", costType='" + costType + '\'' +
+                '}';
+    }
 
     public Integer getCostId() {
         return costId;
@@ -80,19 +97,19 @@ public class Cost {
         this.descr = descr == null ? null : descr.trim();
     }
 
-    public Date getCreatime() {
+    public Timestamp getCreatime() {
         return creatime;
     }
 
-    public void setCreatime(Date creatime) {
+    public void setCreatime(Timestamp creatime) {
         this.creatime = creatime;
     }
 
-    public Date getStartime() {
+    public Timestamp getStartime() {
         return startime;
     }
 
-    public void setStartime(Date startime) {
+    public void setStartime(Timestamp startime) {
         this.startime = startime;
     }
 

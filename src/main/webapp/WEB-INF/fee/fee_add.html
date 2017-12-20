@@ -8,6 +8,7 @@
         <script type="text/javascript" src="/js/jquery-3.2.1.js"></script>
         <script type="text/javascript">
             $(function () {
+                $("span.required").hide();
                 $.ajax({
                     url: "/getAccess",
                     success: function (result) {
@@ -50,6 +51,144 @@
                     divResult.style.display = "block";
                 else
                     divResult.style.display = "none";
+            }
+
+            function addCost() {
+
+                $("#name_error").empty();
+                $("#basetime_error").empty();
+                $("#basecost_error").empty();
+                $("#unit_cost_error").empty();
+                $("#descr_error").empty();
+                $("span.required").hide();
+
+                var costName=$("#name").val();
+                var cost_type=$('input:radio:checked').val();
+                var baseTime=$("#basetime").val();
+                var baseCost=$("#basecost").val();
+                var unitCost=$("#unit_cost").val();
+                var descr=$("#descr").val();
+
+                var nameVerify=/^[a-zA-Z\d\_\u2E80-\u9FFF]{0,50}$/;
+                var descrVerify=/^[a-zA-Z\d\_\u2E80-\u9FFF]{0,100}$/;
+
+                if (costName == "") {
+                    $("#name_error").text("请输入资费名称");
+                    $("span.required").show();
+                    return;
+                }
+
+                if (!nameVerify.exec(costName)){
+                    $("#name_error").text("50长度的字母、数字、汉字和下划线的组合");
+                    $("span.required").show();
+                    return;
+                }
+
+                if(cost_type==1){
+                    if (baseCost==""){
+                        $("#basecost_error").text("请输入基本费用");
+                        $("span.required").show();
+                        return;
+                    }
+                    if (parseInt(baseCost)<0||parseInt(baseCost)>99999.99){
+                        $("#basecost_error").text("0-99999.99之间的数值");
+                        $("span.required").show();
+                        return;
+                    }
+                }
+
+                if(cost_type==2) {
+                    if (baseTime == "") {
+                        $("#basetime_error").text("请输入基本时长");
+                        $("span.required").show();
+                        return;
+                    }
+                    if (parseInt(baseTime) < 1 || parseInt(baseTime) > 600) {
+                        $("#basetime_error").text("1-600之间的数值");
+                        $("span.required").show();
+                        return;
+                    }
+
+                    if (baseCost == "") {
+                        $("#basecost_error").text("请输入基本费用");
+                        $("span.required").show();
+                        return;
+                    }
+                    if (parseInt(baseCost) < 0 || parseInt(baseCost) > 99999.99) {
+                        $("#basecost_error").text("0-99999.99之间的数值");
+                        $("span.required").show();
+                        return;
+                    }
+                    if (unitCost == "") {
+                        $("#unit_cost_error").text("请输入基本时长");
+                        $("span.required").show();
+                        return;
+                    }
+                    if (parseInt(unitCost) < 0 || parseInt(unitCost) > 99999.99) {
+                        $("#unit_cost_error").text("0-99999.99之间的数值");
+                        $("span.required").show();
+                        return;
+                    }
+                }
+
+                    if(cost_type==3) {
+
+                        if (unitCost == "") {
+                            $("#unit_cost_error").text("请输入基本时长");
+                            $("span.required").show();
+                            return;
+                        }
+                        if (parseInt(unitCost) < 0 || parseInt(unitCost) > 99999.99) {
+                            $("#unit_cost_error").text("0-99999.99之间的数值");
+                            $("span.required").show();
+                            return;
+                        }
+                    }
+
+
+
+                if (descr == "") {
+                    $("#descr_error").text("请输入资费说明");
+                    $("span.required").show();
+                    return;
+                }
+
+                if (!descrVerify.exec(descr)){
+                    $("#descr_error").text("100长度的字母、数字、汉字和下划线的组合");
+                    $("span.required").show();
+                    return;
+                }
+
+
+
+
+                $.ajax({
+
+                    type:"post",
+                    url:"/addCost",
+                    traditional:true,
+                    data:{
+
+                        name:costName,
+                        costType:cost_type,
+                        baseDuration:baseTime,
+                        baseCost:baseCost,
+                        unitCost:unitCost,
+                        descr:descr
+                    },
+
+                    success:function (result) {
+
+                        if (result.errorCode==404){
+                            showResult();
+                        }
+                        else {
+                            window.setTimeout("location.href='/toCost'", 3000);
+                        }
+                    }
+
+                })
+
             }
 
             //切换资费类型
@@ -108,45 +247,45 @@
                 <div class="input_info">
                     <input type="text" id="name" class="width300" value=""/>
                     <span class="required">*</span>
-                    <div class="validate_msg_short">50长度的字母、数字、汉字和下划线的组合</div>
+                    <div class="validate_msg_short" id="name_error"></div>
                 </div>
                 <div class="text_info clearfix"><span>资费类型：</span></div>
                 <div class="input_info fee_type">
-                    <input type="radio" name="radFeeType" id="monthly" onclick="feeTypeChange(1);" />
+                    <input type="radio" name="radFeeType" id="monthly" value="1" onclick="feeTypeChange(1);" />
                     <label for="monthly">包月</label>
-                    <input type="radio" name="radFeeType" checked="checked" id="package" onclick="feeTypeChange(2);" />
+                    <input type="radio" name="radFeeType" checked="checked" value="2" id="package" onclick="feeTypeChange(2);" />
                     <label for="package">套餐</label>
-                    <input type="radio" name="radFeeType" id="timeBased" onclick="feeTypeChange(3);" />
+                    <input type="radio" name="radFeeType" id="timeBased" value="3" onclick="feeTypeChange(3);" />
                     <label for="timeBased">计时</label>
                 </div>
                 <div class="text_info clearfix"><span>基本时长：</span></div>
                 <div class="input_info">
-                    <input type="text" value="" class="width100" />
+                    <input type="text" id="basetime" value="" class="width100" />
                     <span class="info">小时</span>
                     <span class="required">*</span>
-                    <div class="validate_msg_long">1-600之间的整数</div>
+                    <div class="validate_msg_long" id="basetime_error"></div>
                 </div>
                 <div class="text_info clearfix"><span>基本费用：</span></div>
                 <div class="input_info">
-                    <input type="text" value="" class="width100" />
+                    <input type="text" id="basecost" value="" class="width100" />
                     <span class="info">元</span>
                     <span class="required">*</span>
-                    <div class="validate_msg_long error_msg">0-99999.99之间的数值</div>
+                    <div class="validate_msg_long error_msg" id="basecost_error"></div>
                 </div>
                 <div class="text_info clearfix"><span>单位费用：</span></div>
                 <div class="input_info">
-                    <input type="text" value="" class="width100" />
+                    <input type="text" id="unit_cost" value="" class="width100" />
                     <span class="info">元/小时</span>
                     <span class="required">*</span>
-                    <div class="validate_msg_long error_msg">0-99999.99之间的数值</div>
+                    <div class="validate_msg_long error_msg" id="unit_cost_error"></div>
                 </div>
                 <div class="text_info clearfix"><span>资费说明：</span></div>
                 <div class="input_info_high">
-                    <textarea class="width300 height70"></textarea>
-                    <div class="validate_msg_short error_msg">100长度的字母、数字、汉字和下划线的组合</div>
+                    <textarea class="width300 height70" id="descr"></textarea>
+                    <div class="validate_msg_short error_msg" id="descr_error"></div>
                 </div>                    
                 <div class="button_info clearfix">
-                    <input type="button" value="保存" class="btn_save"  onclick="showResult();" />
+                    <input type="button" value="保存" class="btn_save"  onclick="addCost();" />
                     <input type="button" value="取消" class="btn_save" />
                 </div>
             </form>  

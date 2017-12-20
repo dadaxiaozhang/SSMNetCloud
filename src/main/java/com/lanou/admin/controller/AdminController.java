@@ -108,10 +108,8 @@ public class AdminController {
         adminRole.setAdminId(adminInfo.getAdmin_id());
         int i = adminInfoService.delAdmin(adminInfo);
         int j = adminInfoService.delAR(adminRole);
-        List<AdminList> admin = adminInfoService.getAdmin();
         if (i == 1 && j != 0) {
             ajaxResult.setErrorCode(200);
-            ajaxResult.setData(admin);
         }
         return ajaxResult;
     }
