@@ -76,6 +76,15 @@ public class CostController {
         java.util.Date date = new java.util.Date();
         long times = date.getTime();
         cost.setCreatime(new Timestamp(times));
+        if (cost.getBaseDuration()==null){
+           cost.setBaseDuration(0);
+        }
+        if (cost.getBaseCost()==null){
+            cost.setBaseCost(0);
+        }
+        if (cost.getUnitCost()==null){
+            cost.setUnitCost(0);
+        }
         costService.insert(cost);
         return ajaxResult;
     }
@@ -96,12 +105,10 @@ public class CostController {
     //    获取当前资费信息存到Session中
     @RequestMapping(value = "/jumptoFee")
     @ResponseBody
-    public AjaxResult updateFee(Cost cost, HttpSession session) throws UnsupportedEncodingException {
+    public AjaxResult updateFee(Integer costId, HttpSession session) throws UnsupportedEncodingException {
 
         AjaxResult ajaxResult = new AjaxResult();
-        cost.setName(URLDecoder.decode(cost.getName(), "UTF-8"));
-        cost.setDescr(URLDecoder.decode(cost.getDescr(), "UTF-8"));
-        session.setAttribute("cost", cost);
+        session.setAttribute("costId", costId);
         ajaxResult.setErrorCode(200);
         return ajaxResult;
     }
@@ -117,7 +124,66 @@ public class CostController {
     public AjaxResult getFeeInfo(HttpSession session) {
         AjaxResult ajaxResult = new AjaxResult();
 
-        Cost cost = (Cost) session.getAttribute("cost");
+        Integer costId = (Integer) session.getAttribute("costId");
+        Cost cost = costService.getCostById(costId);
+        List<String> costName = (List<String>) session.getAttribute("costName");
+        for (int i = 0; i < costName.size(); i++) {
+            if (costName.get(i).equals(cost.getName())){
+                costName.remove(i);
+            }
+        }
+        ajaxResult.setData(cost);
+        return ajaxResult;
+    }
+
+//    资费管理信息修改
+    @RequestMapping(value = "/updateCost")
+    @ResponseBody
+    public AjaxResult updateCost(Cost cost,HttpSession session){
+
+        AjaxResult ajaxResult=new AjaxResult();
+        List<String> costName = (List<String>) session.getAttribute("costName");
+        for (int i = 0; i < costName.size(); i++) {
+            if (costName.get(i).equals(cost.getName())){
+                ajaxResult.setErrorCode(404);
+                return ajaxResult;
+            }
+        }
+        int i = costService.updateCost(cost);
+        if (i==1){
+            ajaxResult.setErrorCode(200);
+        }
+        return ajaxResult;
+    }
+
+//    资费管理状态开通
+    @RequestMapping(value = "/startFee")
+    @ResponseBody
+    public AjaxResult startFee(Cost cost){
+        AjaxResult ajaxResult=new AjaxResult();
+        java.util.Date date = new java.util.Date();
+        long times = date.getTime();
+        cost.setStartime(new Timestamp(times));
+        int i = costService.updateStatus(cost);
+        if (i==1){
+            ajaxResult.setErrorCode(200);
+            ajaxResult.setData(cost);
+        }
+        return ajaxResult;
+    }
+
+//    资费详情跳转
+    @RequestMapping(value = "/fee_detail")
+    public String togetDetail(){
+        return "fee/fee_detail";
+    }
+
+//    资费详情的获取
+    @RequestMapping(value = "/getDetail")
+    @ResponseBody
+    public AjaxResult getDetail(Integer costId){
+        AjaxResult ajaxResult=new AjaxResult();
+        Cost cost = costService.getCostById(costId);
         ajaxResult.setData(cost);
         return ajaxResult;
     }

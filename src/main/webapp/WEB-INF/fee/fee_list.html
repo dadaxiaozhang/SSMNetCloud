@@ -48,7 +48,6 @@
                     console.log(result);
                     for (var i = 0; i < result.data.length; i++) {
 
-                        var name=result.data[i].name;
                         var div = document.getElementById("datalist");
                         var creatime = toDate(result.data[i].creatime);
                         var startime = toDate(result.data[i].startime);
@@ -65,13 +64,14 @@
                         }
 
                         if (status == "暂停") {
-                            div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="fee_detail.html">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td>' + startime +
-                                    '</td><td>' + status + '</td><td>' + '<input type="button" value="启用" class="btn_start" onclick="startFee();" /><input  type="button" value="修改" class="btn_modify" onclick="jumptoupdateFee(' + result.data[i].costId + ',' + name + ',' + result.data[i].costType + ',' + result.data[i].baseDuration + ',' + result.data[i].baseCost + ',' + result.data[i].unitCost + ',' + result.data[i].descr + ');" /><input type="button" value="删除" class="btn_delete" onclick="deleteFee(' + result.data[i].costId + ',' + i + ');" /> </td></tr></tbody>'
+                            startime = "未开通";
+                            div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="/fee_detail?costId=' + result.data[i].costId + '">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td class="starttime">' + startime +
+                                    '</td><td class="change">' + status + '</td><td class="changebtn">' + '<input type="button" value="启用" class="btn_start" onclick="startFee(' + result.data[i].costId + ',' + i + ');" /><input  type="button" value="修改" class="btn_modify" onclick="jumptoupdateFee(' + result.data[i].costId + ');" /><input type="button" value="删除" class="btn_delete" onclick="deleteFee(' + result.data[i].costId + ',' + i + ');" /> </td></tr></tbody>'
                         }
 
                         if (status == "开通") {
-                            div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="fee_detail.html">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td>' + startime +
-                                    '</td><td>' + status + '</td><td></td> </tr></tbody>'
+                            div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="/fee_detail?costId=' + result.data[i].costId + '">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td class="starttime" >' + startime +
+                                    '</td><td class="change">' + status + '</td><td class="changebtn"></td> </tr></tbody>'
                         }
 
 
@@ -93,17 +93,129 @@
             return dateTime;
         }
         //排序按钮的点击事件
-        function sort(btnObj) {
-            if (btnObj.className == "sort_desc")
+        function sortcost(btnObj) {
+            if (btnObj.className == "sort_desc") {
                 btnObj.className = "sort_asc";
+                $.ajax({
+
+                    url: "/getAllCost",
+                    success: function (result) {
+
+                        console.log(result);
+                        for (var i = 0; i < result.data.length; i++) {
+
+                            var div = document.getElementById("datalist");
+                            var creatime = toDate(result.data[i].creatime);
+                            var startime = toDate(result.data[i].startime);
+                            div.tbody.remove();
+                            if (result.data[i].creatime == null) {
+                                creatime = result.data[i].creatime;
+                            }
+                            if (result.data[i].startime == null) {
+                                startime = "未开启";
+                            }
+                            if (result.data[i].status == "0") {
+                                var status = "暂停";
+                            } else {
+                                status = "开通";
+                            }
+
+                            if (status == "暂停") {
+                                startime = "未开通";
+                                div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="/fee_detail?costId=' + result.data[i].costId + '">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td class="starttime">' + startime +
+                                        '</td><td class="change">' + status + '</td><td class="changebtn">' + '<input type="button" value="启用" class="btn_start" onclick="startFee(' + result.data[i].costId + ',' + i + ');" /><input  type="button" value="修改" class="btn_modify" onclick="jumptoupdateFee(' + result.data[i].costId + ');" /><input type="button" value="删除" class="btn_delete" onclick="deleteFee(' + result.data[i].costId + ',' + i + ');" /> </td></tr></tbody>'
+                            }
+
+                            if (status == "开通") {
+                                div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="/fee_detail?costId=' + result.data[i].costId + '">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td class="starttime" >' + startime +
+                                        '</td><td class="change">' + status + '</td><td class="changebtn"></td> </tr></tbody>'
+                            }
+
+                        }
+                    }
+
+                })
+            }
+            else {
+                btnObj.className = "sort_desc";
+
+                $.ajax({
+
+                    url: "/getAllCost",
+                    success: function (result) {
+
+                        console.log(result);
+                        for (var i = result.data.length; i > 0; i--) {
+
+                            var div = document.getElementById("datalist");
+                            var creatime = toDate(result.data[i].creatime);
+                            var startime = toDate(result.data[i].startime);
+                            div.tbody.remove();
+                            if (result.data[i].creatime == null) {
+                                creatime = result.data[i].creatime;
+                            }
+                            if (result.data[i].startime == null) {
+                                startime = "未开启";
+                            }
+                            if (result.data[i].status == "0") {
+                                var status = "暂停";
+                            } else {
+                                status = "开通";
+                            }
+
+                            if (status == "暂停") {
+                                startime = "未开通";
+                                div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="/fee_detail?costId=' + result.data[i].costId + '">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td class="starttime">' + startime +
+                                        '</td><td class="change">' + status + '</td><td class="changebtn">' + '<input type="button" value="启用" class="btn_start" onclick="startFee(' + result.data[i].costId + ',' + i + ');" /><input  type="button" value="修改" class="btn_modify" onclick="jumptoupdateFee(' + result.data[i].costId + ');" /><input type="button" value="删除" class="btn_delete" onclick="deleteFee(' + result.data[i].costId + ',' + i + ');" /> </td></tr></tbody>'
+                            }
+
+                            if (status == "开通") {
+                                div.innerHTML = div.innerHTML + '<tbody class="tbody"><tr><td>' + result.data[i].costId + '</td><td><a href="/fee_detail?costId=' + result.data[i].costId + '">' + result.data[i].name + '</a></td><td>' + result.data[i].baseDuration + '小时' + '</td><td>' + result.data[i].baseCost + '元' + '</td><td>' + result.data[i].unitCost + '元/小时' + '</td><td>' + creatime + '</td><td class="starttime" >' + startime +
+                                        '</td><td class="change">' + status + '</td><td class="changebtn"></td> </tr></tbody>'
+                            }
+
+
+                        }
+                    }
+
+                })
+            }
+        }
+        //排序按钮的点击事件
+        function sorttime(btnObj) {
+            if (btnObj.className == "sort_desc") {
+                btnObj.className = "sort_asc";
+
+            }
             else
                 btnObj.className = "sort_desc";
         }
 
         //启用
-        function startFee() {
+        function startFee(costId, i) {
             var r = window.confirm("确定要启用此资费吗？资费启用后将不能修改和删除。");
-            document.getElementById("operate_result_info").style.display = "block";
+            if (r) {
+                $.ajax({
+
+                    url: "/startFee",
+                    data: {
+                        costId: costId,
+                        status: "1",
+                    },
+                    success: function (result) {
+                        console.log(result)
+                        if (result.errorCode == 200) {
+                            var time = toDate(result.data.startime);
+                            $(".change").eq(i).replaceWith("<td class='change'>开通</td>");
+                            $(".changebtn").eq(i).replaceWith("<td class='changebtn'></td>");
+                            $(".starttime").eq(i).replaceWith("<td class='starttime' >" + time + "</td>")
+                        }
+                    }
+
+                })
+
+            }
+
         }
         //删除
         function deleteFee(costId, i) {
@@ -130,21 +242,14 @@
             }
         }
 
-        function jumptoupdateFee(costId, costName, costType, baseTime, baseCost, unitCost, Descr) {
-
+        function jumptoupdateFee(costId) {
 
             $.ajax({
 
                 url: "/jumptoFee",
                 data: {
 
-                    costId: costId,
-                    name: encodeURI(costName),
-                    costType: costType,
-                    baseDuration: baseTime,
-                    baseCost: baseCost,
-                    unitCost: unitCost,
-                    descr: encodeURI(Descr)
+                    costId: costId
                 },
 
                 success: function (result) {
@@ -177,12 +282,12 @@
         <div class="search_add">
             <div>
                 <!--<input type="button" value="月租" class="sort_asc" onclick="sort(this);" />-->
-                <input type="button" value="基费" class="sort_asc" onclick="sort(this);"/>
-                <input type="button" value="时长" class="sort_asc" onclick="sort(this);"/>
+                <input type="button" value="基费" class="sort_asc" onclick="sortcost(this);"/>
+                <input type="button" value="时长" class="sort_asc" onclick="sorttime(this);"/>
             </div>
             <input type="button" value="增加" class="btn_add" onclick="location.href='/toAddCost';"/>
         </div>
-        <!--启用操作的操作提示-->
+     -   <!--启用操作的操作提示-->
         <div id="operate_result_info" class="operate_success">
             <img src="../images/close.png" onclick="this.parentNode.style.display='none';"/>
             删除成功！

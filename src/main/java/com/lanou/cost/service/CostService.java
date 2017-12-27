@@ -15,4 +15,11 @@ public interface CostService {
     List<Cost> getAllCost();
 
     int delCost(Cost cost);
+
+    Cost getCostById(Integer costId);
+
+    int updateCost(Cost cost);
+
+    int updateStatus(Cost cost);
+
 }

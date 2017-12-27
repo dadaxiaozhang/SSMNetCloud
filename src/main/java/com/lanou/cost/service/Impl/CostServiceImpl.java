@@ -32,4 +32,21 @@ public class CostServiceImpl implements CostService {
     public int delCost(Cost cost) {
         return costMapper.delCost(cost);
     }
+
+    @Override
+    public Cost getCostById(Integer costId) {
+        return costMapper.getCostById(costId);
+    }
+
+    @Override
+    public int updateCost(Cost cost) {
+        return costMapper.updateCost(cost);
+    }
+
+    @Override
+    public int updateStatus(Cost cost) {
+        return costMapper.updateStatus(cost);
+    }
+
+
 }

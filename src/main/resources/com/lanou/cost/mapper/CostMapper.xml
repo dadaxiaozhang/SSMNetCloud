@@ -90,10 +90,20 @@
       </if>
     </trim>
   </insert>
-  <delete id="delCost">
+  <update id="updateCost">
+    UPDATE cost SET name=#{name},cost_type=#{costType},base_duration=#{baseDuration},base_cost=#{baseCost},unit_cost=#{unitCost},descr=#{descr} where cost_id=#{costId}
+  </update>
+    <update id="updateStatus">
+      UPDATE cost SET status=#{status},startime=#{startime} where cost_id=#{costId}
+    </update>
+    <delete id="delCost">
     DELETE FROM cost WHERE cost_id=#{costId}
   </delete>
   <select id="getAllCost" resultMap="CostMap">
-    SELECT * FROM cost
+    SELECT * FROM cost ORDER BY base_cost DESC
   </select>
+    <select id="getCostById" resultMap="CostMap">
+      SELECT * FROM cost WHERE cost_id=#{costId}
+    </select>
+
 </mapper>

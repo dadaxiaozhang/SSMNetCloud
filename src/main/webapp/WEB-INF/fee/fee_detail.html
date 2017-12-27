@@ -4,13 +4,103 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title></title>
         <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css" />
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css" />       
+        <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css" />
+        <script type="text/javascript" src="/js/jquery-3.2.1.js"></script>
+        <script type="text/javascript">
+            $(function () {
+                $("span.required").hide();
+                $.ajax({
+                    url: "/getAccess",
+                    success: function (result) {
+
+                        var div = document.getElementById("menu");
+                        div.innerHTML = '<li><a href="#" onclick="window.location.reload()" class="index_on"></a></li>';
+                        for (var i = 0; i < result.data.length; i++) {
+
+                            var array = result.data[i];
+
+                            if (array.moduleId === 1) {
+                                div.innerHTML = div.innerHTML + '<li><a href="/role_info" class="role_off"></a></li>';
+                            } else if (array.moduleId === 2) {
+                                div.innerHTML = div.innerHTML + '<li><a href="/toAdmin" class="admin_off"></a></li>';
+                            }
+                            else if (array.moduleId === 3) {
+                                div.innerHTML = div.innerHTML + ' <li><a href="/toCost" class="fee_off"></a></li>';
+                            } else if (array.moduleId === 4) {
+                                div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/account/account_list.html" class="account_off"></a></li>';
+                            } else if (array.moduleId === 5) {
+                                div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/service/service_list.html" class="service_off"></a></li>';
+                            } else if (array.moduleId === 6) {
+                                div.innerHTML = div.innerHTML + ' <li><a href="WEB-INF/bill/bill_list.html" class="bill_off"></a></li>';
+                            } else if (array.moduleId === 7) {
+                                div.innerHTML = div.innerHTML + '<li><a href="WEB-INF/report/report_list.html" class="report_off"></a></li>';
+                            }
+                        }
+                        div.innerHTML = div.innerHTML + ' <li><a href="/user_info" class="information_off"></a></li>' + ' <li><a href="/updatePwd" class="password_off"></a></li>';
+                    }
+                });
+            });
+
+                var costid=window.location.search.split("=")[1];
+                $.ajax({
+
+                    url:"/getDetail",
+                    data:{
+                        costId:costid,
+                    },
+
+                    success:function (result) {
+                        console.log(result);
+                        $("#costId").val(result.data.costId);
+                        $("#name").val(result.data.name);
+                        if (result.data.status=="1"){
+                            $("#status").val("1");
+                        }else {
+                            $("#status").val("2");
+                        }
+                        if (result.data.costType=="1"){
+                            $("#monthly").attr("checked","checked");
+                        }
+
+                        if (result.data.costType=="2"){
+                            $("#package").attr("checked","checked");
+                        }
+
+                        if (result.data.costType=="3"){
+                            $("#timeBased").attr("checked","checked");
+                        }
+
+                        $("#basetime").val(result.data.baseDuration);
+                        $("#basecost").val(result.data.baseCost);
+                        $("#unitcost").val(result.data.unitCost);
+
+                        var createtime=toDate(result.data.creatime);
+                        var starttime=toDate(result.data.startime);
+                        $("#createtime").val(createtime);
+                        $("#starttime").val(starttime);
+
+                    }
+                })
+
+            //        时间戳转化为标准时间
+            function toDate(date) {
+                var date = new Date(date);
+                Y = date.getFullYear() + '-';
+                M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+                D = date.getDate() + ' ';
+                h = date.getHours() + ':';
+                m = date.getMinutes() + ':';
+                s = date.getSeconds();
+                var dateTime = Y + M + D + h + m + s;
+                return dateTime;
+            }
+            </script>
     </head>
     <body>
         <!--Logo区域开始-->
         <div id="header">
             <img src="../images/logo.png" alt="logo" class="left"/>
-            <a href="#">[退出]</a>            
+            <a href="/exit">[退出]</a>
         </div>
         <!--Logo区域结束-->
         <!--导航区域开始-->
@@ -24,48 +114,48 @@
         <div id="main">            
             <form action="" method="" class="main_form">
                 <div class="text_info clearfix"><span>资费ID：</span></div>
-                <div class="input_info"><input type="text" class="readonly" readonly value="1" /></div>
+                <div class="input_info"><input id="costId" type="text" class="readonly" readonly value="" /></div>
                 <div class="text_info clearfix"><span>资费名称：</span></div>
-                <div class="input_info"><input type="text" class="readonly" readonly value="包 20 小时"/></div>
+                <div class="input_info"><input id="name" type="text" class="readonly" readonly value=""/></div>
                 <div class="text_info clearfix"><span>资费状态：</span></div>
                 <div class="input_info">
-                    <select class="readonly" disabled>
-                        <option>开通</option>
-                        <option>暂停</option>
-                        <option>删除</option>
+                    <select id="status" class="readonly" disabled>
+                        <option value="1">开通</option>
+                        <option value="2">暂停</option>
+                        <option value="3">删除</option>
                     </select>                        
                 </div>
                 <div class="text_info clearfix"><span>资费类型：</span></div>
                 <div class="input_info fee_type">
-                    <input type="radio" name="radFeeType" id="monthly" disabled="disabled" />
+                    <input type="radio" name="radFeeType" id="monthly" disabled="disabled" value="1" />
                     <label for="monthly">包月</label>
-                    <input type="radio" name="radFeeType" id="package" disabled="disabled" />
+                    <input type="radio" name="radFeeType" id="package" disabled="disabled" value="2" />
                     <label for="package">套餐</label>
-                    <input type="radio" name="radFeeType" checked="checked" id="timeBased" disabled="disabled" />
+                    <input type="radio" name="radFeeType" checked="checked" id="timeBased" disabled="disabled" value="3" />
                     <label for="timeBased">计时</label>
                 </div>
                 <div class="text_info clearfix"><span>基本时长：</span></div>
                 <div class="input_info">
-                    <input type="text" class="readonly" readonly value="20"  />
+                    <input id="basetime" type="text" class="readonly" readonly value=""  />
                     <span>小时</span>
                 </div>
                 <div class="text_info clearfix"><span>基本费用：</span></div>
                 <div class="input_info">
-                    <input type="text"  class="readonly" readonly value="24.5" />
+                    <input id="basecost" type="text"  class="readonly" readonly value="" />
                     <span>元</span>
                 </div>
                 <div class="text_info clearfix"><span>单位费用：</span></div>
                 <div class="input_info">
-                    <input type="text"  class="readonly" readonly value="3.00" />
+                    <input id="unitcost" type="text"  class="readonly" readonly value="" />
                     <span>元/小时</span>
                 </div>
                 <div class="text_info clearfix"><span>创建时间：</span></div>
-                <div class="input_info"><input type="text"  class="readonly" readonly value="2013/1/1 00:00:00" /></div>      
+                <div class="input_info"><input id="createtime" type="text"  class="readonly" readonly value="" /></div>
                 <div class="text_info clearfix"><span>启动时间：</span></div>
-                <div class="input_info"><input type="text"  class="readonly" readonly value="2013/1/1 00:00:00" /></div>      
+                <div class="input_info"><input id="starttime" type="text"  class="readonly" readonly value="" /></div>
                 <div class="text_info clearfix"><span>资费说明：</span></div>
                 <div class="input_info_high">
-                    <textarea class="width300 height70 readonly" readonly>包 20 小时，20 小时以内 24.5 元，超出部分 3.00 元/小时</textarea>
+                    <textarea id="descr"  class="width300 height70 readonly" readonly></textarea>
                 </div>                    
                 <div class="button_info clearfix">
                     <input type="button" value="返回" class="btn_save" onclick="location.href='fee_list.html';" />
